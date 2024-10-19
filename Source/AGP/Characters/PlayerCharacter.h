@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "BaseCharacter.h"
 #include "InputActionValue.h"
+#include "PlayerCharacterHUD.h"
 #include "PlayerCharacter.generated.h"
 
 class UInputMappingContext;
@@ -34,6 +35,10 @@ protected:
 	UInputAction* FireAction;
 	UPROPERTY(EditDefaultsOnly)
 	UInputMappingContext* InputMappingContext;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UPlayerCharacterHUD> PlayerHUDClass;
+	UPROPERTY()
+	UPlayerCharacterHUD* PlayerHUD;
 
 	UPROPERTY(EditDefaultsOnly)
 	float LookSensitivity = 0.5f;

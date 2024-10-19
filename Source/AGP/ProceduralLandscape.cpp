@@ -24,7 +24,7 @@ void AProceduralLandscape::BeginPlay()
 {
 	Super::BeginPlay();
 	PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>();
-	GenerateTerrain();
+	//GenerateTerrain();
 }
 
 void AProceduralLandscape::ClearLandscape()
@@ -596,7 +596,7 @@ void AProceduralLandscape::GenerateTunnels()
 		//int32 StartHoleIndex = HolePair.Key;
 		//int32 TargetHoleIndex = HolePair.Value;
 
-		FVector StartPos = Vertices[HoleIndex] - FVector(0.0f, 0.0f, VertexSpacing * (TunnelLevels + 0.5f));
+		FVector StartPos = Vertices[HoleIndex] - FVector(0.0f, 0.0f, VertexSpacing * (TunnelLevels + 1.0f));
 		FVector EndPos = Vertices[TargetHoleIndex] - FVector(0.0f, 0.0f, VertexSpacing * (TunnelLevels + 0.5f));
 
 		FVector TunnelDirection = (EndPos - StartPos).GetSafeNormal();
@@ -635,7 +635,6 @@ void AProceduralLandscape::GenerateTunnels()
 				}
 			}
 			
-
 			for (int32 Vertex = 0; Vertex < 6; ++Vertex)
 			{
 				FVector VertexVector = CurrentPos + FVector(TunnelRadius * FMath::Cos(Vertex * PI / 3.0f), 0.0f,
@@ -683,6 +682,9 @@ void AProceduralLandscape::GenerateTunnels()
 	Triangles.Append({LastTunnelVertex, LastHoleUpIndex + 1, LastHoleUpIndex + 2});
 	Triangles.Append({LastTunnelVertex + 4, LastTunnelVertex + 3, LastHoleUpIndex + 3});
 	Triangles.Append({LastTunnelVertex + 3, LastHoleUpIndex + 2, LastHoleUpIndex + 3});
+
+	//Triangles.Append({FirstTunnelVertex + 5, FirstTunnelVertex, FirstHoleUpIndex + 1});
+	//Triangles.Append({FirstTunnelVertex, FirstTunnelVertex + 1, FirstHoleUpIndex + 1});
 }
 
 /*void AProceduralLandscape::GenerateTunnels()
@@ -963,6 +965,8 @@ void AProceduralLandscape::GenerateCliffs()
 		}
 	}
 
+	/*
+	
 	// CONNECTION BETWEEN RIGHT AND BACK
 
 	int32 RConnectionIndex = Vertices.Num();
@@ -1024,6 +1028,8 @@ void AProceduralLandscape::GenerateCliffs()
 			});
 		}
 	}
+
+	*/
 
 	// LEFT BOTTOM CLIFF FACE
 
@@ -1197,7 +1203,9 @@ void AProceduralLandscape::GenerateCliffs()
 		}
 	}
 
-	// CONNECTION BETWEEN RIGHT AND BACK
+	/*
+	
+	// CONNECTION BETWEEN LEFT AND BACK
 
 	int32 LConnectionIndex = Vertices.Num();
 
@@ -1216,6 +1224,7 @@ void AProceduralLandscape::GenerateCliffs()
 
 	Triangles.Append({LConnectionIndex + 1, LConnectionIndex, LConnectionIndex + 3});
 	Triangles.Append({LConnectionIndex + 1, LConnectionIndex + 3, LConnectionIndex + 2});
+	*/
 }
 
 void AProceduralLandscape::GenerateMesh() const

@@ -6,7 +6,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "PickupManagerSubsystem.generated.h"
 
-class AWeaponPickup;
+class APickup;
 /**
  * 
  */

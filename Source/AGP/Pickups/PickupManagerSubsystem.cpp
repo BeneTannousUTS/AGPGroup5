@@ -3,7 +3,7 @@
 
 #include "PickupManagerSubsystem.h"
 
-#include "WeaponPickup.h"
+#include "Pickup.h"
 #include "AGP/AGPGameInstance.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 
@@ -16,10 +16,10 @@ void UPickupManagerSubsystem::Tick(float DeltaTime)
 	// A value < NM_Client is any type of server. So if it is >=
 	// to NM_Client or == NM_Client then we know it is the client
 	// and we don't want to spawn.
-	/*if (GetWorld()->GetNetMode() >= NM_Client)
+	if (GetWorld()->GetNetMode() >= NM_Client)
 	{
 		return;
-	}*/
+	}
 
 	if (PossibleSpawnLocations.IsEmpty())
 	{
@@ -53,14 +53,14 @@ void UPickupManagerSubsystem::SpawnWeaponPickup()
 		SpawnPosition.Z += 50.0f;
 		if (GameInstance->Balance < 500)
 		{
-			GetWorld()->SpawnActor<AWeaponPickup>(
+			GetWorld()->SpawnActor<APickup>(
 			GameInstance->GetMoneyPickupClass(), SpawnPosition, FRotator::ZeroRotator);
 			GameInstance->UpdateBalance(100);
 			UE_LOG(LogTemp, Display, TEXT("Money Pickup Spawned"));
 		}
 		else
 		{
-			GetWorld()->SpawnActor<AWeaponPickup>(
+			GetWorld()->SpawnActor<APickup>(
 			GameInstance->GetWeaponPickupClass(), SpawnPosition, FRotator::ZeroRotator);
 			UE_LOG(LogTemp, Display, TEXT("Weapon Pickup Spawned"));
 		}

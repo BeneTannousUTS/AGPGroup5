@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "PickupBase.h"
-#include "WeaponPickup.generated.h"
+#include "Pickup.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class AGP_API AWeaponPickup : public APickupBase
+class AGP_API APickup : public APickupBase
 {
 	GENERATED_BODY()
 

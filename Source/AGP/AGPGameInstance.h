@@ -5,7 +5,7 @@
 #include "Engine/GameInstance.h"
 #include "AGPGameInstance.generated.h"
 
-class AWeaponPickup;
+class APickup;
 /**
  * 
  */
@@ -24,8 +24,8 @@ public:
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Pickup Classes")
-	TSubclassOf<AWeaponPickup> WeaponPickupClass;
+	TSubclassOf<APickup> WeaponPickupClass;
 	UPROPERTY(EditDefaultsOnly, Category="Pickup Classes")
-	TSubclassOf<AWeaponPickup> MoneyPickupClass;
+	TSubclassOf<APickup> MoneyPickupClass;
 	
 };

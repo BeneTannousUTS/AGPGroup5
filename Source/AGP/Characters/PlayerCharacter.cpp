@@ -27,6 +27,18 @@ void APlayerCharacter::BeginPlay()
 			Subsystem->AddMappingContext(InputMappingContext, 0);
 		}
 	}
+
+	if (IsLocallyControlled() && PlayerHUDClass)
+	{
+		if (APlayerController*  PlayerController = Cast<APlayerController>(GetController()))
+		{
+			PlayerHUD = CreateWidget<UPlayerCharacterHUD>(PlayerController, PlayerHUDClass);
+			if (PlayerHUD)
+			{
+				PlayerHUD->AddToPlayerScreen();
+			}
+		}
+	}
 }
 
 // Called every frame
