@@ -8,45 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ca479de-55cc-45b9-afed-41413260bf9d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AGP/Characters/SquadSubsystem.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AGP/Characters/SquadSubsystem.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AGP/Characters/WeaponComponent.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Source/AGP/Characters/WeaponComponent.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_AGPGameInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_AGPGameInstance.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_PickupRotatorComponent.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_PickupRotatorComponent.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_WeaponPickup.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_WeaponPickup.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/M_FPGun.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/M_FPGun.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/ML_GlossyBlack_Latex_UE4.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/ML_GlossyBlack_Latex_UE4.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/ML_Plastic_Shiny_Beige.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/ML_Plastic_Shiny_Beige.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/ML_Screen.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/ML_Screen.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/ML_SoftMetal_UE4.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/ML_SoftMetal_UE4.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/T_ML_Aluminum01.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/T_ML_Aluminum01.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/T_ML_Aluminum01_N.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/T_ML_Aluminum01_N.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/T_ML_Rubber_Blue_01_D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/T_ML_Rubber_Blue_01_D.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/T_ML_Rubber_Blue_01_N.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Materials/MaterialLayers/T_ML_Rubber_Blue_01_N.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Mesh/SM_FPGun.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Mesh/SM_FPGun.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Textures/T_FPGun_M.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Textures/T_FPGun_M.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Textures/T_FPGun_N.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/FirstPersonContent/Weapon/Textures/T_FPGun_N.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/AnimBP_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/AnimBP_Mannequin.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_AICharacter_New.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_AICharacter_New.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/ProceduralMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ProceduralMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Materials/M_WeaponRifle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Materials/M_WeaponRifle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle_PhysicsAsset.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle_PhysicsAsset.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_AORM.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_AORM.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_Combined_N.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_Combined_N.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_D.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/AGP.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/AGP.Build.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/AGPGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/AGPGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/AGPGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/AGPGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/BaseCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/BaseCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/BaseCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/EnemyCharacter.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/EnemyCharacter.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/SquadSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/SquadSubsystem.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,6 +140,7 @@
       <workItem from="1729316277861" duration="2191000" />
       <workItem from="1729420241871" duration="6839000" />
       <workItem from="1729428698761" duration="232000" />
+      <workItem from="1729482231060" duration="1435000" />
     </task>
     <servers />
   </component>

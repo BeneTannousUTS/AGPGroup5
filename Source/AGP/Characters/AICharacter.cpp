@@ -43,6 +43,7 @@ void AAICharacter::TickFollowLeader()
 	
 	FVector MovementDirection = TargetLocation - GetActorLocation();
 	MovementDirection.Normalize();
+	MovementDirection = MovementDirection.GetSafeNormal();
 	AddMovementInput(MovementDirection);
 
 	if(SensedCharacter)

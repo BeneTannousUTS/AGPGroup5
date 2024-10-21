@@ -126,6 +126,12 @@ void USquadSubsystem::SuggestTargetToLeader(AAICharacter* AICharacter, AAICharac
 	{
 		AICharacter->SquadLeader->SensedCharacter = PotentialTarget;
 	}
+	//If the player is alone and the sensed character isn't part of a squad (1v1) take the fight
+	else if (AICharacter->SquadMembers.Num() == 0 && PotentialTarget->SquadMembers.Num() == 0)
+	{
+		AICharacter->SensedCharacter = PotentialTarget;
+		AICharacter->CurrentState = EAIState::Engage;
+	}
 }
 
 
