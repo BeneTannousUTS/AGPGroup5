@@ -1,11 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AICharacter.h"
+
 #include "HealthComponent.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SquadSubsystem.h"
-#include "WeaponComponent.h"
 #include "Perception/PawnSensingComponent.h"
 
 AAICharacter::AAICharacter(): PathfindingSubsystem(nullptr), SquadSubsystem(nullptr), SquadLeader(nullptr)
@@ -43,7 +43,6 @@ void AAICharacter::TickFollowLeader()
 	
 	FVector MovementDirection = TargetLocation - GetActorLocation();
 	MovementDirection.Normalize();
-	MovementDirection = MovementDirection.GetSafeNormal();
 	AddMovementInput(MovementDirection);
 
 	if(SensedCharacter)
