@@ -35,30 +35,30 @@ void AAICharacter::BeginPlay()
 
 void AAICharacter::TickFollowLeader()
 {
+	if(!CurrentPath.IsEmpty())
+	{
+		CurrentPath.Empty();
+	}
 	if (!SquadLeader || SquadMembers.IsEmpty()) return;
 
 	int32 Index = SquadLeader->SquadMembers.Find(this);
 	FVector FormationOffset = GetCircleFormationOffset(Index, SquadMembers.Num());
 	FVector TargetLocation = SquadLeader->GetActorLocation() + FormationOffset;
-	
+    
 	FVector MovementDirection = TargetLocation - GetActorLocation();
-	MovementDirection.Normalize();
-	AddMovementInput(MovementDirection);
+	float DistanceToTarget = MovementDirection.Size();
+
+	float MinDistanceThreshold = 10.0f; // Adjust as needed
+	if (DistanceToTarget > MinDistanceThreshold)
+	{
+		MovementDirection.Normalize();
+		AddMovementInput(MovementDirection);
+	}
 
 	if(SensedCharacter)
 	{
 		if (HasWeapon())
 		{
-			// Calculate the rotation needed to face the SensedCharacter, only on the Z axis
-			FRotator LookAtRotation = FRotationMatrix::MakeFromX(MovementDirection).Rotator();
-			LookAtRotation.Pitch = 0.0f; // Lock pitch
-			LookAtRotation.Roll = 0.0f;  // Lock roll
-        
-			// Set a smooth rotation
-			FRotator CurrentRotation = GetActorRotation();
-			FRotator NewRotation = FMath::RInterpTo(CurrentRotation, LookAtRotation, GetWorld()->GetDeltaSeconds(), 5.0f);
-			SetActorRotation(NewRotation);
-
 			// Check if the weapon's magazine is empty and reload if necessary
 			if (WeaponComponent->IsMagazineEmpty())
 			{
@@ -280,7 +280,7 @@ void AAICharacter::UpdateState()
 	switch (CurrentState)
 	{
 	case EAIState::Patrol:
-		MovementState = EMoveState::WALKING;
+		MovementState = EMoveState::RUNNING;
 		TickPatrol();
 		break;
 		
