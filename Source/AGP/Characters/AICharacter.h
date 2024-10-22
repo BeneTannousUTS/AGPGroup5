@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
+#include "AGP/Pathfinding/NavigationNode.h"
 #include "GameFramework/Character.h"
 #include "AICharacter.generated.h"
 
@@ -11,9 +12,15 @@ class UPawnSensingComponent;
 class UPathfindingSubsystem;
 class USquadSubsystem;
 
-/**
- * Enum to store enemy character state
- */
+UENUM(BlueprintType)
+enum class EAIType : uint8
+{
+	Soldier,
+	Sniper,
+	Medic,
+	Scout
+};
+
 UENUM(BlueprintType)
 enum class EAIState : uint8
 {
@@ -107,10 +114,18 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	AAICharacter* SensedCharacter = nullptr;
+	
+	UPROPERTY(VisibleAnywhere)
+	ANavigationNode* TargetNode;
+	UPROPERTY(VisibleAnywhere)
+	ANavigationNode* NextNode;
+	
+	UPROPERTY(VisibleAnywhere)
+	EMoveState NextMoveState;
 
 	// Movement and pathfinding
 	void MoveAlongPath();
-
+	
 	// Emotion-related properties
 	int FearLevel = 0;
 	int AdrenalineLevel = 0;

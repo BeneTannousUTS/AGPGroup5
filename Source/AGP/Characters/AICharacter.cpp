@@ -48,7 +48,7 @@ void AAICharacter::TickFollowLeader()
 	FVector MovementDirection = TargetLocation - GetActorLocation();
 	float DistanceToTarget = MovementDirection.Size();
 
-	float MinDistanceThreshold = 10.0f; // Adjust as needed
+	float MinDistanceThreshold = 10.0f; 
 	if (DistanceToTarget > MinDistanceThreshold)
 	{
 		MovementDirection.Normalize();
@@ -68,7 +68,6 @@ void AAICharacter::TickFollowLeader()
 		}
 	}
 }
-
 
 void AAICharacter::TickPatrol()
 {
@@ -254,6 +253,9 @@ void AAICharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	TargetNode = PathfindingSubsystem->GetNodeFromLocation(CurrentPath[0]);
+	NextNode = PathfindingSubsystem->GetNodeFromLocation(CurrentPath[1]);
+
 	// Handle squad behavior via the subsystem
 	if (SquadSubsystem)
 	{
@@ -280,7 +282,6 @@ void AAICharacter::UpdateState()
 	switch (CurrentState)
 	{
 	case EAIState::Patrol:
-		MovementState = EMoveState::RUNNING;
 		TickPatrol();
 		break;
 		
@@ -289,7 +290,6 @@ void AAICharacter::UpdateState()
 		{
 			CurrentState = EAIState::Engage;
 		}
-		MovementState = EMoveState::RUNNING;
 		TickFollowLeader();
 		break;
 
@@ -300,17 +300,14 @@ void AAICharacter::UpdateState()
 			TickEvade();
 			break;
 		}
-		MovementState = EMoveState::WALKING;
 		TickEngage();
 		break;
 
 	case EAIState::Evade:
-		MovementState = EMoveState::RUNNING;
 		TickEvade();
 		break;
 
 	case EAIState::Cover:
-		MovementState = EMoveState::RUNNING;
 		TickCover();
 		break;
 
@@ -338,17 +335,19 @@ void AAICharacter::MoveAlongPath()
 	if (FVector::Distance(GetActorLocation(), CurrentPath[CurrentPath.Num() - 1]) < PathfindingError)
 	{
 		CurrentPath.Pop();
+		MovementState = NextMoveState;
 	}
 }
 
 void AAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
 FVector AAICharacter::GetCircleFormationOffset(int32 MemberIndex, int32 SquadSize)
 {
-	float Radius = 200.0f; // The radius of the circle
+	float Radius = 75.0f * SquadSize; // The radius of the circle
 	float AngleStep = 360.0f / SquadSize; // Calculate the angle step based on the number of members
 
 	// Convert the angle to radians

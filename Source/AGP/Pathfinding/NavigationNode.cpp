@@ -15,6 +15,11 @@ ANavigationNode::ANavigationNode()
 	
 }
 
+ENavigationNodeType ANavigationNode::GetNodeType()
+{
+	return NodeType;
+}
+
 // Called when the game starts or when spawned
 void ANavigationNode::BeginPlay()
 {
@@ -27,7 +32,7 @@ void ANavigationNode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	return;
+	//return;
 
 	FColor SphereColor = FColor::Blue;
 
@@ -44,19 +49,19 @@ void ANavigationNode::Tick(float DeltaTime)
 	
 	DrawDebugSphere(GetWorld(), GetActorLocation(), 50.0f, 4, SphereColor, false, -1, 0, 5.0f);
 	
-	for (const ANavigationNode* ConnectedNode : ConnectedNodes)
-	{
-		if (ConnectedNode)
-		{
-			FColor LineColor = FColor::Red;
-			if (ConnectedNode->ConnectedNodes.Contains(this))
-			{
-				LineColor = FColor::Green;
-			}
-			DrawDebugLine(GetWorld(), GetActorLocation(), ConnectedNode->GetActorLocation(),
-				LineColor, false, -1, 0, 5.0f);
-		}
-	}
+	// for (const ANavigationNode* ConnectedNode : ConnectedNodes)
+	// {
+	// 	if (ConnectedNode)
+	// 	{
+	// 		FColor LineColor = FColor::Red;
+	// 		if (ConnectedNode->ConnectedNodes.Contains(this))
+	// 		{
+	// 			LineColor = FColor::Green;
+	// 		}
+	// 		DrawDebugLine(GetWorld(), GetActorLocation(), ConnectedNode->GetActorLocation(),
+	// 			LineColor, false, -1, 0, 5.0f);
+	// 	}
+	// }
 }
 
 bool ANavigationNode::ShouldTickIfViewportsOnly() const

@@ -41,6 +41,8 @@ public:
 	void UpdatesNodes(const TArray<ANavigationNode*>& NewNodes);
 	TArray<FVector> GetSpawnPositions();
 
+	ANavigationNode* GetNodeFromLocation(const FVector& Location);
+
 protected:
 
 	TArray<ANavigationNode*> Nodes;

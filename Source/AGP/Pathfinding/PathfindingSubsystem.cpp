@@ -57,6 +57,22 @@ TArray<FVector> UPathfindingSubsystem::GetSpawnPositions()
 	return ValidNodes;
 }
 
+ANavigationNode* UPathfindingSubsystem::GetNodeFromLocation(const FVector& Location)
+{
+	ANavigationNode* ClosestNode = FindNearestNode(Location);
+
+	// Return the closest node if found, otherwise return nullptr.
+	if (ClosestNode)
+	{
+		return ClosestNode;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No node found near the specified location."));
+		return nullptr;
+	}
+}
+
 ANavigationNode* UPathfindingSubsystem::GetRandomNode()
 {
 	// Failure condition
