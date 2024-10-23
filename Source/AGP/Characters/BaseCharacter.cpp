@@ -21,8 +21,6 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	EquipWeapon(bHasWeapon, DefaultWeaponStats);
 }
 
 void ABaseCharacter::Fire(const FVector& FireAtLocation)

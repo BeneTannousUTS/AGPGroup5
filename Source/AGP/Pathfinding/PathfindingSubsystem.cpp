@@ -64,13 +64,12 @@ ANavigationNode* UPathfindingSubsystem::GetNodeFromLocation(const FVector& Locat
 	// Return the closest node if found, otherwise return nullptr.
 	if (ClosestNode)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Returning found node"));
 		return ClosestNode;
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No node found near the specified location."));
-		return nullptr;
-	}
+
+	UE_LOG(LogTemp, Warning, TEXT("No node found near the specified location."));
+	return nullptr;
 }
 
 ANavigationNode* UPathfindingSubsystem::GetRandomNode()

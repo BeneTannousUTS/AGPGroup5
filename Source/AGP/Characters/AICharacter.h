@@ -38,7 +38,8 @@ enum class EMoveState : uint8
 	RUNNING,
 	CLIMBINGUP,
 	CLIMBINGDOWN,
-	CRAWLING
+	CRAWLING,
+	FINISHCLIMB
 };
 
 UENUM(BlueprintType)
@@ -65,6 +66,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ETeam AITeam = ETeam::Team1;
+
+	UFUNCTION(BlueprintCallable)
+	EMoveState GetMoveState();
+
+	UFUNCTION(BlueprintCallable)
+	bool GetCrouchState();
+	
 	
 protected:
 	friend class USquadSubsystem;
@@ -114,12 +122,17 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere)
 	AAICharacter* SensedCharacter = nullptr;
-	
+
+
 	UPROPERTY(VisibleAnywhere)
 	ANavigationNode* TargetNode;
 	UPROPERTY(VisibleAnywhere)
+	ENavigationNodeType TargetNodeType;
+	UPROPERTY(VisibleAnywhere)
 	ANavigationNode* NextNode;
-	
+	UPROPERTY(VisibleAnywhere)
+	ENavigationNodeType NextNodeType;
+
 	UPROPERTY(VisibleAnywhere)
 	EMoveState NextMoveState;
 
@@ -129,7 +142,7 @@ protected:
 	// Emotion-related properties
 	int FearLevel = 0;
 	int AdrenalineLevel = 0;
-	int ConfidenceLevel = 50;
+	int ConfidenceLevel = 100;
 
 	void SenseEnemy();
 	
@@ -144,6 +157,12 @@ protected:
 
 	bool bIsRunningFromEnemy;
 
+	bool DelayedMoveChange = false;
+
+	FWeaponStats DefaultWeaponStats;
+
+	void CalculateNextMoveState();
+
 public:
 	void UpdateMoveState();
 	virtual void Tick(float DeltaTime) override;
@@ -152,4 +171,5 @@ public:
 
 private:
 	void UpdateState();
+	bool bNextMoveCanBeSet = true;
 };

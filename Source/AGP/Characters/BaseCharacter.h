@@ -71,7 +71,6 @@ protected:
 
 	bool bIsCrouching = false;
 	bool bHasWeapon= true;
-	FWeaponStats DefaultWeaponStats;
 
 public:	
 	// Called every frame

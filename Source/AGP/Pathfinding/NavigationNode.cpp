@@ -15,11 +15,6 @@ ANavigationNode::ANavigationNode()
 	
 }
 
-ENavigationNodeType ANavigationNode::GetNodeType()
-{
-	return NodeType;
-}
-
 // Called when the game starts or when spawned
 void ANavigationNode::BeginPlay()
 {

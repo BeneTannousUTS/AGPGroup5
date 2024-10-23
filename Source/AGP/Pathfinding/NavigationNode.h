@@ -35,8 +35,6 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	ENavigationNodeType NodeType = ENavigationNodeType::WALKING;
 
-	ENavigationNodeType GetNodeType();
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

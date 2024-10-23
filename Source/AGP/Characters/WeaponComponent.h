@@ -10,7 +10,8 @@ UENUM()
 enum EWeaponType:uint8
 {
 	Rifle,
-	Pistol
+	Pistol,
+	Sniper
 };
 
 USTRUCT(BlueprintType)

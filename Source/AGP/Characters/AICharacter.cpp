@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AICharacter.h"
-
 #include "HealthComponent.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -31,6 +30,8 @@ void AAICharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AAICharacter::OnSensedPawn);
 	}
+
+	EquipWeapon(bHasWeapon, DefaultWeaponStats);
 }
 
 void AAICharacter::TickFollowLeader()
@@ -168,6 +169,16 @@ void AAICharacter::TickCover()
 	//TODO DURING ASSESSMENT 4
 }
 
+EMoveState AAICharacter::GetMoveState()
+{
+	return MovementState;
+}
+
+bool AAICharacter::GetCrouchState()
+{
+	return bIsCrouching;
+}
+
 void AAICharacter::OnSensedPawn(APawn* SensedActor)
 {
 	AAICharacter* PotentialEnemy = Cast<AAICharacter>(SensedActor);
@@ -215,6 +226,60 @@ void AAICharacter::OnSensedCharacterDestroyed(AActor* DestroyedActor)
 }
 
 
+void AAICharacter::CalculateNextMoveState()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Calculating Next Move state"));
+	if(CurrentPath.Num() > 2)
+	{
+		TargetNode = PathfindingSubsystem->GetNodeFromLocation(CurrentPath[CurrentPath.Num()-1]);
+		NextNode = PathfindingSubsystem->GetNodeFromLocation(CurrentPath[CurrentPath.Num()-2]);
+
+		if(TargetNode)
+		{
+			TargetNodeType = TargetNode->NodeType;
+		}
+
+		if(NextNode)
+		{
+			NextNodeType = NextNode->NodeType;
+		}
+	}else
+	{
+		CurrentPath.Empty();
+		return;
+	}
+
+	if(DelayedMoveChange)
+	{
+		NextMoveState = EMoveState::FINISHCLIMB;
+		bNextMoveCanBeSet = false;
+		DelayedMoveChange = false;
+		return;
+	}
+	
+	//Calculate next move state based on next two nodes
+	if(NextNodeType == ENavigationNodeType::WALKING)
+	{
+		NextMoveState = EMoveState::RUNNING;
+	}else if(TargetNodeType == ENavigationNodeType::CLIMBINGUP &&
+		NextNodeType == ENavigationNodeType::CLIMBINGDOWN)
+	{
+		NextMoveState = EMoveState::CLIMBINGUP;
+		CurrentPath[CurrentPath.Num() - 2] = CurrentPath[CurrentPath.Num() - 2] + FVector(0,0,200);
+		DelayedMoveChange = true;
+	}else if(TargetNodeType == ENavigationNodeType::CLIMBINGDOWN &&
+		NextNodeType == ENavigationNodeType::CLIMBINGUP)
+	{
+		NextMoveState = EMoveState::CLIMBINGDOWN;
+	}else if(NextNodeType == ENavigationNodeType::CRAWLING)
+	{
+		NextMoveState = EMoveState::CRAWLING;
+	}
+	
+	bNextMoveCanBeSet = false;
+	//UE_LOG(LogTemp, Warning, TEXT("Next Move state calculated"));
+}
+
 void AAICharacter::UpdateMoveState()
 {
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
@@ -224,50 +289,41 @@ void AAICharacter::UpdateMoveState()
 	{
 	case EMoveState::WALKING:
 		bIsCrouching = false;
+		if(!MovementComponent->IsFalling()){
+			MovementComponent->MovementMode = MOVE_Walking;
+		}
 		MovementComponent->MaxWalkSpeed = 300.0f;
 		break;
 	case EMoveState::RUNNING:
 		bIsCrouching = false;
+		if(!MovementComponent->IsFalling()){
+			MovementComponent->MovementMode = MOVE_Walking;
+		}
 		MovementComponent->MaxWalkSpeed = 600.0f;
 		break;
 	case EMoveState::CLIMBINGUP:
 		bIsCrouching = false;
 		MovementComponent->MovementMode = MOVE_Flying;
-		MovementComponent->MaxFlySpeed = 200.0f;
+		MovementComponent->MaxFlySpeed = 100.0f;
 			break;
 	case EMoveState::CLIMBINGDOWN:
 		bIsCrouching = false;
 		MovementComponent->MovementMode = MOVE_Flying;
-		MovementComponent->MaxFlySpeed = 200.0f;
+		MovementComponent->MaxFlySpeed = 100.0f;
 			break;
 	case EMoveState::CRAWLING:
-		Crouch();
 		bIsCrouching = true;
-		MovementComponent->MaxWalkSpeed = 150.0f;
+		if(!MovementComponent->IsFalling()){
+			MovementComponent->MovementMode = MOVE_Walking;
+		}
+		MovementComponent->MaxWalkSpeed = 600.0f;
+		break;
+	case EMoveState::FINISHCLIMB:
+		bIsCrouching = false;
+		MovementComponent->MovementMode = MOVE_Flying;
+		MovementComponent->MaxFlySpeed = 600.0f;
 		break;
 	}
-}
-
-
-void AAICharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	TargetNode = PathfindingSubsystem->GetNodeFromLocation(CurrentPath[0]);
-	NextNode = PathfindingSubsystem->GetNodeFromLocation(CurrentPath[1]);
-
-	// Handle squad behavior via the subsystem
-	if (SquadSubsystem)
-	{
-		SquadSubsystem->DetectNearbySquadMembers(this);
-		SquadSubsystem->AssignSquadLeader(this);
-		SquadSubsystem->OnLeaderDeath(this);
-		SquadSubsystem->AdjustBehaviorBasedOnSquadSize(this);
-	}
-	
-	SenseEnemy();
-	UpdateState();
-	UpdateMoveState();
 }
 
 void AAICharacter::UpdateState()
@@ -336,6 +392,8 @@ void AAICharacter::MoveAlongPath()
 	{
 		CurrentPath.Pop();
 		MovementState = NextMoveState;
+		bNextMoveCanBeSet = true;
+		//UE_LOG(LogTemp, Warning, TEXT("Next Move can be set = true"));
 	}
 }
 
@@ -359,3 +417,26 @@ FVector AAICharacter::GetCircleFormationOffset(int32 MemberIndex, int32 SquadSiz
 
 	return FVector(OffsetX, OffsetY, 0.0f);
 }
+
+void AAICharacter::Tick(float DeltaTime)
+ {
+ 	Super::Tick(DeltaTime);
+ 
+ 	// Handle squad behavior via the subsystem
+ 	if (SquadSubsystem)
+ 	{
+ 		SquadSubsystem->DetectNearbySquadMembers(this);
+ 		SquadSubsystem->AssignSquadLeader(this);
+ 		SquadSubsystem->OnLeaderDeath(this);
+ 		SquadSubsystem->AdjustBehaviorBasedOnSquadSize(this);
+ 	}
+
+	if(bNextMoveCanBeSet)
+	{
+		CalculateNextMoveState();
+	}
+	
+ 	SenseEnemy();
+ 	UpdateState();
+ 	UpdateMoveState();
+ }
