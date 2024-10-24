@@ -110,6 +110,34 @@ ANavigationNode* UPathfindingSubsystem::FindNearestNode(const FVector& TargetLoc
 	return ClosestNode;
 }
 
+FVector UPathfindingSubsystem::FindCover(const FVector& TargetLocation, FName TagName)
+{
+	AActor* ClosestActor = nullptr;
+	float MinDistance = UE_MAX_FLT;
+	for (TActorIterator<AActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+	{
+		AActor* Actor = *ActorItr;
+		if(Actor->Tags.Contains(TagName))
+		{
+			const float Distance = FVector::Distance(TargetLocation, ActorItr->GetActorLocation());
+			if (Distance < MinDistance)
+			{
+				MinDistance = Distance;
+				ClosestActor = *ActorItr;
+			}
+		}
+	}
+
+	if(ClosestActor == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("There are no obstacles to take cover with"))
+		return FVector::ZeroVector; // Return an invalid location
+	}else
+	{
+		return ClosestActor->GetActorLocation();
+	}
+}
+
 ANavigationNode* UPathfindingSubsystem::FindFurthestNode(const FVector& TargetLocation)
 {
 	// Failure condition.

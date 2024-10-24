@@ -136,8 +136,6 @@ void AAICharacter::TickEngage()
 	}
 }
 
-
-
 void AAICharacter::TickEvade()
 {
 	// Find the player and return if it can't find it.
@@ -167,6 +165,11 @@ void AAICharacter::TickEvade()
 void AAICharacter::TickCover()
 {
 	//TODO DURING ASSESSMENT 4
+	CurrentPath.Empty();
+
+	FVector CoverVector = PathfindingSubsystem->FindCover(GetActorLocation(), FName("RockObstacle"));
+
+	CurrentPath.Add(CoverVector);
 }
 
 EMoveState AAICharacter::GetMoveState()
