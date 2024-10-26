@@ -3,10 +3,14 @@
 
 #include "ProceduralLandscape.h"
 #include "KismetProceduralMeshLibrary.h"
+#include "MultiplayerGameMode.h"
+#include "Characters/PlayerCharacter.h"
+#include "GameFramework/PlayerStart.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Pathfinding/NavigationNode.h"
 #include "Pathfinding/PathfindingSubsystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AProceduralLandscape::AProceduralLandscape()
@@ -14,6 +18,7 @@ AProceduralLandscape::AProceduralLandscape()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+	SetReplicates(true);
 
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Procedural Mesh"));
 	SetRootComponent(ProceduralMesh);
@@ -24,7 +29,7 @@ void AProceduralLandscape::BeginPlay()
 {
 	Super::BeginPlay();
 	PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>();
-	//GenerateTerrain();
+	GenerateTerrain();
 }
 
 void AProceduralLandscape::ClearLandscape()
@@ -77,6 +82,11 @@ void AProceduralLandscape::ClearLandscape()
 	PathfindingSubsystem->UpdatesNodes(Nodes);
 	ProceduralMesh->ClearMeshSection(0);
 	UKismetSystemLibrary::FlushPersistentDebugLines(GetWorld());
+}
+
+void AProceduralLandscape::OnRep_TerrainGenerated()
+{
+	GenerateMesh();
 }
 
 void AProceduralLandscape::RemoveNavNodes()
@@ -160,6 +170,87 @@ void AProceduralLandscape::SpawnClimbingRock(FVector SpawnLocation) const
 
 		CubeMesh->SetWorldScale3D(FVector(Size, Size, Size));
 	}
+}
+
+void AProceduralLandscape::SetPlayerSpawns()
+{
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), AvailablePlayerStarts);
+
+	if (AvailablePlayerStarts.Num() == 2)
+	{
+		// Move the two PlayerStarts to new positions
+		MovePlayerStarts(
+			FVector(VertexSpacing * Width / 2.0f, -500.0f, 8000.0f), FVector(VertexSpacing * Width / 2.0f, VertexSpacing * (Depth - 1) + 500.0f, 8000.0f), 
+			FRotator(0.0f, 0, 0.0f), FRotator(0.0f, 0.0f, 0.0f)
+		);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Not 2 Player Starts"));
+	}
+}
+
+void AProceduralLandscape::MovePlayerStarts(const FVector& Position1, const FVector& Position2, const FRotator& Rotation1, const FRotator& Rotation2)
+{
+	if (AvailablePlayerStarts.Num() < 2)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Insufficient PlayerStart actors to move!"));
+		return;
+	}
+
+	// Move the first PlayerStart
+	APlayerStart* PlayerStart1 = Cast<APlayerStart>(AvailablePlayerStarts[0]);
+	if (PlayerStart1)
+	{
+		if (PlayerStart1->GetRootComponent())
+		{
+			PlayerStart1->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+		}
+		
+		PlayerStart1->SetActorLocationAndRotation(Position1, Rotation1);
+		UE_LOG(LogTemp, Log, TEXT("Moved PlayerStart 1 to (%s)"), *Position1.ToString());
+	}
+
+	// Move the second PlayerStart
+	APlayerStart* PlayerStart2 = Cast<APlayerStart>(AvailablePlayerStarts[1]);
+	if (PlayerStart2)
+	{
+		if (PlayerStart2->GetRootComponent())
+		{
+			PlayerStart2->GetRootComponent()->SetMobility(EComponentMobility::Movable);
+		}
+		
+		PlayerStart2->SetActorLocationAndRotation(Position2, Rotation2);
+		UE_LOG(LogTemp, Log, TEXT("Moved PlayerStart 2 to (%s)"), *Position2.ToString());
+	}
+}
+
+void AProceduralLandscape::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AProceduralLandscape, Vertices);
+	DOREPLIFETIME(AProceduralLandscape, Triangles);
+	DOREPLIFETIME(AProceduralLandscape, UVCoords);
+}
+
+void AProceduralLandscape::Multicast_OnTerrainGenerated_Implementation()
+{
+	GenerateMesh();
+
+	/*APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	if (PlayerController && !HasAuthority())  // Ensure it's not the server
+	{
+		if (AMultiplayerGameMode* GameMode = Cast<AMultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+		{
+			GameMode->RespawnPlayer(PlayerController, 1);
+			UE_LOG(LogTemp, Log, TEXT("Client respawned at index: %d"), 1);
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("CALLED ON SERVER"));
+	}*/
 }
 
 bool AProceduralLandscape::ShouldTickIfViewportsOnly() const
@@ -687,107 +778,6 @@ void AProceduralLandscape::GenerateTunnels()
 	//Triangles.Append({FirstTunnelVertex, FirstTunnelVertex + 1, FirstHoleUpIndex + 1});
 }
 
-/*void AProceduralLandscape::GenerateTunnels()
-{
-    float TunnelRadius = VertexSpacing * 0.6f;
-    float StepSize = VertexSpacing;
-
-    // Define pairs of holes to connect
-    TArray<TPair<int32, int32>> HolePairs = {
-        {HoleIndices.Array()[0], HoleIndices.Array()[1]},
-        {HoleIndices.Array()[1], HoleIndices.Array()[3]}
-    };
-
-    // Iterate through each hole pair to generate tunnels
-    for (const TPair<int32, int32>& HolePair : HolePairs)
-    {
-        int32 StartHoleIndex = HolePair.Key;
-        int32 TargetHoleIndex = HolePair.Value;
-
-        FVector StartPos = Vertices[StartHoleIndex] - FVector(0.0f, 0.0f, VertexSpacing * (TunnelLevels + 0.5f));
-        FVector EndPos = Vertices[TargetHoleIndex] - FVector(0.0f, 0.0f, VertexSpacing * (TunnelLevels + 0.5f));
-
-        FVector TunnelDirection = (EndPos - StartPos).GetSafeNormal();
-        float TunnelLength = (EndPos - StartPos).Size();
-
-        int32 PreviousRingStartIndex = -1;
-        ANavigationNode* PrevNavNode = nullptr;
-
-        // Generate tunnel geometry and navigation nodes along the path
-        for (float Step = 0.0f; Step < TunnelLength; Step += StepSize)
-        {
-            FVector CurrentPos = StartPos + TunnelDirection * Step +
-                                 FVector(FMath::RandRange(-0.25f, 0.25f) * VertexSpacing,
-                                         FMath::RandRange(-0.1f, 0.1f) * VertexSpacing, 0.0f);
-            int32 CurrentRingStartIndex = Vertices.Num();
-
-            // Create navigation node at each step
-            if (Step != 0)
-            {
-                FVector NavLoc = CurrentPos - FVector(0, 0, TunnelRadius * 0.8f);
-
-                ANavigationNode* Node = GetWorld()->SpawnActor<ANavigationNode>();
-                Node->SetActorLocation(NavLoc);
-                Node->NodeType = ENavigationNodeType::CRAWLING;
-                Nodes.Add(Node);
-
-                // Connect to the previous node
-                if (PrevNavNode)
-                {
-                    PrevNavNode->ConnectedNodes.Add(Node);
-                    Node->ConnectedNodes.Add(PrevNavNode);
-                }
-                PrevNavNode = Node;
-
-                // Connect the first node to the starting hole's navigation node
-                if (Step == StepSize)
-                {
-                    Node->ConnectedNodes.Add(Nodes[StartHoleIndex]);
-                    Nodes[StartHoleIndex]->ConnectedNodes.Add(Node);
-                }
-            }
-
-            // Generate vertices for the tunnel's ring
-            for (int32 Vertex = 0; Vertex < 6; ++Vertex)
-            {
-                FVector VertexVector = CurrentPos +
-                                       FVector(TunnelRadius * FMath::Cos(Vertex * PI / 3.0f), 0.0f,
-                                               TunnelRadius * FMath::Sin(Vertex * PI / 3.0f));
-                Vertices.Add(VertexVector);
-                UVCoords.Add(FVector2D(0.0f, 0.0f));
-            }
-
-            // Create triangles between the current and previous rings
-            if (PreviousRingStartIndex != -1)
-            {
-                for (int32 i = 0; i < 6; ++i)
-                {
-                    int32 CurrentVertex1 = CurrentRingStartIndex + i;
-                    int32 CurrentVertex2 = CurrentRingStartIndex + ((i + 1) % 6);
-                    int32 PreviousVertex1 = PreviousRingStartIndex + i;
-                    int32 PreviousVertex2 = PreviousRingStartIndex + ((i + 1) % 6);
-
-                    // Add triangles to the tunnel mesh
-                    Triangles.Append({PreviousVertex1, CurrentVertex1, CurrentVertex2});
-                    Triangles.Append({PreviousVertex1, CurrentVertex2, PreviousVertex2});
-                }
-            }
-
-            PreviousRingStartIndex = CurrentRingStartIndex;
-        }
-
-        // Connect the last node to the target hole's navigation node
-        if (PrevNavNode)
-        {
-            PrevNavNode->ConnectedNodes.Add(Nodes[TargetHoleIndex]);
-            Nodes[TargetHoleIndex]->ConnectedNodes.Add(PrevNavNode);
-        }
-    }
-
-    UE_LOG(LogTemp, Log, TEXT("Tunnels generated successfully between the four holes."));
-}
-*/
-
 void AProceduralLandscape::GenerateCliffs()
 {
 	// RIGHT CLIFF BOTTOM FACE
@@ -1273,12 +1263,35 @@ void AProceduralLandscape::GenerateSafeHouse(FVector SpawnLocation) const
 	}
 }
 
+void AProceduralLandscape::RespawnServerPlayer()
+{
+	if (!HasAuthority()) return;  // Ensure only the server executes this
+
+	// Get the server's player controller (usually the first controller)
+	APlayerController* ServerController = GetWorld()->GetFirstPlayerController();
+	if (!ServerController) 
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No server player controller found!"));
+		return;
+	}
+
+	// Get the GameMode and call the respawn logic
+	if (AMultiplayerGameMode* GameMode = Cast<AMultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+	{
+		GameMode->RespawnPlayer(ServerController, 0);
+		UE_LOG(LogTemp, Log, TEXT("Server player respawned!"));
+	}
+}
+
 void AProceduralLandscape::GenerateTerrain()
 {
+	if (!HasAuthority()) return;
+	
 	Width = FMath::RandRange(MinWidth, MaxWidth);
 	Depth = FMath::RandRange(MinDepth, MaxDepth);
 	Height = FMath::RandRange(MinHeight, MaxHeight);
-	
+
+	SetPlayerSpawns();
 	ClearLandscape();
 	GenerateBase();
 	GenerateTunnels();
@@ -1286,7 +1299,14 @@ void AProceduralLandscape::GenerateTerrain()
 	GenerateMesh();
 	GenerateSafeHouse(FVector((Width - 1) * VertexSpacing / 2, (Depth - 5) * VertexSpacing + VertexSpacing / 2.0f, 0));
 	GenerateSafeHouse(FVector((Width - 1) * VertexSpacing / 2, 3 * VertexSpacing + VertexSpacing / 2.0f, 0));
-
 	RemoveNavNodes();
 	PathfindingSubsystem->UpdatesNodes(Nodes);
+
+	if (AMultiplayerGameMode* GameMode = Cast<AMultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
+	{
+		GameMode->PlayerStartLocations = AvailablePlayerStarts;
+		RespawnServerPlayer();
+	}
+
+	Multicast_OnTerrainGenerated();
 }

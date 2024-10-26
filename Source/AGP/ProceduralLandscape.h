@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
+#include "GameFramework/PlayerStart.h"
 #include "Pathfinding/NavigationNode.h"
 #include "ProceduralLandscape.generated.h"
 
@@ -24,6 +25,7 @@ public:
 	void GenerateSafeHouse(FVector SpawnLocation) const;
 
 protected:
+	void RespawnServerPlayer();
 	void GenerateTerrain();
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -31,16 +33,23 @@ protected:
 	UProceduralMeshComponent* ProceduralMesh;
 
 	void ClearLandscape();
-    UPROPERTY()
+    UPROPERTY(ReplicatedUsing = OnRep_TerrainGenerated)
     TArray<FVector> Vertices;
-    UPROPERTY()
+    UPROPERTY(ReplicatedUsing = OnRep_TerrainGenerated)
     TArray<int32> Triangles;
-    UPROPERTY()
+    UPROPERTY(ReplicatedUsing = OnRep_TerrainGenerated)
     TArray<FVector2D> UVCoords;
 	UPROPERTY()
 	TArray<ANavigationNode*> Nodes;
 	UPROPERTY()
 	UPathfindingSubsystem* PathfindingSubsystem;
+
+	UFUNCTION()
+	void OnRep_TerrainGenerated();
+	void TellClientsToRespawn();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_OnTerrainGenerated();
 
 	UPROPERTY(EditAnywhere)
 	bool bShouldRegenerate = false;
@@ -67,7 +76,7 @@ protected:
 	int32 Width;
 	int32 Depth;
 	int32 Height;
-
+	
 	/*UPROPERTY(EditAnywhere)
 	float PerlinScale = 1000.0f;
 	UPROPERTY(EditAnywhere)
@@ -84,5 +93,8 @@ public:
 
 private:
 	void SpawnClimbingRock(FVector SpawnLocation) const;
-
+	void SetPlayerSpawns();
+	void MovePlayerStarts(const FVector& Position1, const FVector& Position2, const FRotator& Rotation1,
+	                      const FRotator& Rotation2);
+	TArray<AActor*> AvailablePlayerStarts;
 };
