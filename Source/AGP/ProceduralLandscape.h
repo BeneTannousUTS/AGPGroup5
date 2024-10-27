@@ -31,16 +31,19 @@ protected:
 	UProceduralMeshComponent* ProceduralMesh;
 
 	void ClearLandscape();
-    UPROPERTY()
+    UPROPERTY(Replicated)
     TArray<FVector> Vertices;
-    UPROPERTY()
+    UPROPERTY(Replicated)
     TArray<int32> Triangles;
-    UPROPERTY()
+    UPROPERTY(Replicated)
     TArray<FVector2D> UVCoords;
 	UPROPERTY()
 	TArray<ANavigationNode*> Nodes;
 	UPROPERTY()
 	UPathfindingSubsystem* PathfindingSubsystem;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	UFUNCTION(NetMulticast, Reliable)
+	void OnTerrainGenerated();
 
 	UPROPERTY(EditAnywhere)
 	bool bShouldRegenerate = false;
