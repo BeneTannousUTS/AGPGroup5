@@ -52,7 +52,7 @@ void AProceduralLandscape::ClearLandscape()
 	}
 	
 	TArray<AActor*> SafeHouses;
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("SafeHouseCube"), SafeHouses);
+	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("SafeHouse"), SafeHouses);
 	for (AActor* FoundActor : SafeHouses)
 	{
 		FoundActor->Destroy();
@@ -1233,32 +1233,26 @@ void AProceduralLandscape::GenerateSafeHouse(FVector SpawnLocation) const
 {
 	if (UWorld* World = GetWorld())
 	{
-		if (AActor* CubeActor = World->SpawnActor<AActor>(AActor::StaticClass()))
+		// Check if the SafeHouseBlueprintClass is set
+		if (SafeHouseBlueprintClass)
 		{
-			CubeActor->Tags.Add(FName("SafeHouseCube"));
-
-			int32 Size = 15;
-			SpawnLocation = SpawnLocation + FVector(0,0,Size * 100.0f / 2);
-			UStaticMeshComponent* CubeMesh = NewObject<UStaticMeshComponent>(CubeActor);
-			CubeMesh->SetupAttachment(CubeActor->GetRootComponent());
-			CubeActor->SetRootComponent(CubeMesh);
-			CubeMesh->RegisterComponent();
-			CubeMesh->SetWorldLocation(SpawnLocation);
-
-			if (UStaticMesh* CubeAsset = LoadObject<UStaticMesh>(nullptr, TEXT("/Engine/BasicShapes/Cube.Cube")))
+			TArray<AActor*> ExistingSafeHouses;
+			UGameplayStatics::GetAllActorsWithTag(World, FName("SafeHouse"), ExistingSafeHouses);
+			
+			//FRotator SpawnRotation = (!ExistingSafeHouses.IsEmpty()) ? FRotator(0, 180, 0) : FRotator::ZeroRotator;
+			
+			if (AActor* SafeHouseActor = World->SpawnActor<AActor>(SafeHouseBlueprintClass, SpawnLocation, FRotator(0,0,0)))
 			{
-				CubeMesh->SetStaticMesh(CubeAsset);
+				SafeHouseActor->Tags.Add(FName("SafeHouse"));
+				
+				int32 Size = 15;
+				FVector AdjustedLocation = SpawnLocation + FVector(0, 0, Size * 100.0f / 2);
+				SafeHouseActor->SetActorLocation(AdjustedLocation);
 			}
-
-			CubeMesh->SetWorldScale3D(FVector(Size, Size, Size));
-
-			UMaterialInterface* CubeMaterial = LoadObject<UMaterialInterface>(
-				nullptr, TEXT("/Script/Engine.Material'/Game/Materials/RedMaterial.RedMaterial'"));
-
-			if (CubeMaterial)
-			{
-				CubeMesh->SetMaterial(0, CubeMaterial);
-			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("SafeHouseBlueprintClass is not set. Cannot spawn SafeHouse."));
 		}
 	}
 }

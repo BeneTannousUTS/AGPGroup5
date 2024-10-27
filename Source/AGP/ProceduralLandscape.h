@@ -72,6 +72,8 @@ protected:
 	int32 MaxHeight = 3;
 	UPROPERTY(EditAnywhere)
 	float VertexSpacing = 1000.0f;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> SafeHouseBlueprintClass;
 
 	int32 Width;
 	int32 Depth;
