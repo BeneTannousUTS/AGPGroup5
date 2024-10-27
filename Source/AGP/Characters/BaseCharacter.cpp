@@ -2,9 +2,14 @@
 
 
 #include "BaseCharacter.h"
+<<<<<<< HEAD
 #include "HealthComponent.h"
 #include "WeaponComponent.h"
 #include "Net/UnrealNetwork.h"
+=======
+
+#include "HealthComponent.h"
+>>>>>>> ui
 
 // Sets default values
 ABaseCharacter::ABaseCharacter()
@@ -21,6 +26,7 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+<<<<<<< HEAD
 }
 
 void ABaseCharacter::Fire(const FVector& FireAtLocation)
@@ -43,6 +49,45 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	DOREPLIFETIME(ABaseCharacter, WeaponComponent);
+=======
+	
+}
+
+bool ABaseCharacter::Fire(const FVector& FireAtLocation)
+{
+	// Determine if the character is able to fire.
+	if (TimeSinceLastShot < MinTimeBetweenShots)
+	{
+		return false;
+	}
+
+	FHitResult HitResult;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, BulletStartPosition->GetComponentLocation(), FireAtLocation, ECC_Pawn, QueryParams))
+	{
+		if (ABaseCharacter* HitCharacter = Cast<ABaseCharacter>(HitResult.GetActor()))
+		{
+			if (UHealthComponent* HitCharacterHealth = HitCharacter->GetComponentByClass<UHealthComponent>())
+			{
+				HitCharacterHealth->ApplyDamage(WeaponDamage);
+			}
+			DrawDebugLine(GetWorld(), BulletStartPosition->GetComponentLocation(), HitResult.ImpactPoint, FColor::Green, false, 1.0f);
+		}
+		else
+		{
+			DrawDebugLine(GetWorld(), BulletStartPosition->GetComponentLocation(), HitResult.ImpactPoint, FColor::Orange, false, 1.0f);
+		}
+		
+	}
+	else
+	{
+		DrawDebugLine(GetWorld(), BulletStartPosition->GetComponentLocation(), FireAtLocation, FColor::Red, false, 1.0f);
+	}
+
+	TimeSinceLastShot = 0.0f;
+	return true;
+>>>>>>> ui
 }
 
 // Called every frame
@@ -50,14 +95,21 @@ void ABaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+<<<<<<< HEAD
 	if(HealthComponent->IsDead())
 	{
 		Destroy();
+=======
+	if (bHasWeaponEquipped)
+	{
+		TimeSinceLastShot += DeltaTime;
+>>>>>>> ui
 	}
 }
 
 bool ABaseCharacter::HasWeapon()
 {
+<<<<<<< HEAD
 	return (WeaponComponent != nullptr);
 }
 
@@ -110,6 +162,15 @@ bool ABaseCharacter::EquipWeaponImplementation(bool bEquipWeapon, const FWeaponS
 	}
 	
 	//EquipWeaponGraphical(bEquipWeapon);
+=======
+	return bHasWeaponEquipped;
+}
+
+void ABaseCharacter::EquipWeapon(bool bEquipWeapon)
+{
+	bHasWeaponEquipped = bEquipWeapon;
+	EquipWeaponGraphical(bEquipWeapon);
+>>>>>>> ui
 	if (bEquipWeapon)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Player has equipped weapon."))
@@ -118,6 +179,7 @@ bool ABaseCharacter::EquipWeaponImplementation(bool bEquipWeapon, const FWeaponS
 	{
 		UE_LOG(LogTemp, Display, TEXT("Player has unequipped weapon."))
 	}
+<<<<<<< HEAD
 
 	return true;
 }
@@ -133,5 +195,14 @@ void ABaseCharacter::ServerEquipWeapon_Implementation(bool bEquipWeapon, const F
 void ABaseCharacter::MulticastEquipWeapon_Implementation(bool bEquipWeapon)
 {
 	//EquipWeaponGraphical(bEquipWeapon);
+=======
+}
+
+// Called to bind functionality to input
+void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+>>>>>>> ui
 }
 

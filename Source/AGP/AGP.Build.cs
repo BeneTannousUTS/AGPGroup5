@@ -8,9 +8,15 @@ public class AGP : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
+<<<<<<< HEAD
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "AIModule" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "ProceduralMeshComponent" });
+=======
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+
+		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "AIModule", "ProceduralMeshComponent" });
+>>>>>>> ui
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

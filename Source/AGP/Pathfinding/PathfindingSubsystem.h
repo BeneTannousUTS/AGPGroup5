@@ -41,9 +41,12 @@ public:
 	void UpdatesNodes(const TArray<ANavigationNode*>& NewNodes);
 	TArray<FVector> GetSpawnPositions();
 
+<<<<<<< HEAD
 	ANavigationNode* GetNodeFromLocation(const FVector& Location);
 	FVector FindCover(const FVector& TargetLocation, FName TagName);
 
+=======
+>>>>>>> ui
 protected:
 
 	TArray<ANavigationNode*> Nodes;

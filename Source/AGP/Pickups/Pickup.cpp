@@ -15,7 +15,11 @@ void APickup::OnPickupOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	{
 		if (!Player->HasWeapon())
 		{
+<<<<<<< HEAD
 			//Player->EquipWeapon(true);
+=======
+			Player->EquipWeapon(true);
+>>>>>>> ui
 			Destroy();
 		}
 	}

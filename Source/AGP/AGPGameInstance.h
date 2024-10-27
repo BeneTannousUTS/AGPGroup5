@@ -2,7 +2,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+<<<<<<< HEAD
 #include "Characters/AICharacter.h"
+=======
+>>>>>>> ui
 #include "Engine/GameInstance.h"
 #include "AGPGameInstance.generated.h"
 
@@ -22,15 +25,22 @@ public:
 	int32 Balance = 0;
 	void UpdateBalance(int32 Change);
 
+<<<<<<< HEAD
 	UPROPERTY(EditDefaultsOnly, Category="Pickup Classes")
 	TSubclassOf<AAICharacter> AIClass;
 
+=======
+>>>>>>> ui
 protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Pickup Classes")
 	TSubclassOf<APickup> WeaponPickupClass;
 	UPROPERTY(EditDefaultsOnly, Category="Pickup Classes")
 	TSubclassOf<APickup> MoneyPickupClass;
+<<<<<<< HEAD
 
 	UClass* GetAIClass() const;
+=======
+	
+>>>>>>> ui
 };

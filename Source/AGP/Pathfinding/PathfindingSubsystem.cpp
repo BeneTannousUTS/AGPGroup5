@@ -57,6 +57,7 @@ TArray<FVector> UPathfindingSubsystem::GetSpawnPositions()
 	return ValidNodes;
 }
 
+<<<<<<< HEAD
 ANavigationNode* UPathfindingSubsystem::GetNodeFromLocation(const FVector& Location)
 {
 	ANavigationNode* ClosestNode = FindNearestNode(Location);
@@ -72,6 +73,8 @@ ANavigationNode* UPathfindingSubsystem::GetNodeFromLocation(const FVector& Locat
 	return nullptr;
 }
 
+=======
+>>>>>>> ui
 ANavigationNode* UPathfindingSubsystem::GetRandomNode()
 {
 	// Failure condition
@@ -110,6 +113,7 @@ ANavigationNode* UPathfindingSubsystem::FindNearestNode(const FVector& TargetLoc
 	return ClosestNode;
 }
 
+<<<<<<< HEAD
 FVector UPathfindingSubsystem::FindCover(const FVector& TargetLocation, FName TagName)
 {
 	AActor* ClosestActor = nullptr;
@@ -138,6 +142,8 @@ FVector UPathfindingSubsystem::FindCover(const FVector& TargetLocation, FName Ta
 	}
 }
 
+=======
+>>>>>>> ui
 ANavigationNode* UPathfindingSubsystem::FindFurthestNode(const FVector& TargetLocation)
 {
 	// Failure condition.
