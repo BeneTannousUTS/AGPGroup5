@@ -11,11 +11,13 @@ void APickup::OnPickupOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
                               UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitInfo)
 {
 	//Super::OnPickupOverlap(OverlappedComponent, OtherActor, OtherComponent, OtherBodyIndex, bFromSweep, HitInfo);
-
+	UE_LOG(LogTemp, Display, TEXT("Overlap event occurred on Pickup from Actor: %s"), *OtherActor->GetName());
 	if (AAICharacter* AIChar = Cast<AAICharacter>(OtherActor))
 	{
-		UE_LOG(LogTemp, Display, TEXT("AI Overlap event occurred on Pickup"))
 		UAGPGameInstance* GameInstance = Cast<UAGPGameInstance>(GetGameInstance());
+
+		// this code need changes, it needs to find the client with the correct player team then add the money to that game instance
+		
 		if (AIChar->GetTeam() == GameInstance->PlayerTeam)
 		{
 			GameInstance->UpdateBalance(100);

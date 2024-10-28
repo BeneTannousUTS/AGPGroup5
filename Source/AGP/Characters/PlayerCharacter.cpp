@@ -5,8 +5,10 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "AGP/AGPGameInstance.h"
 #include "Kismet/KismetMathLibrary.h"
 
+class UAGPGameInstance;
 // Sets default values
 APlayerCharacter::APlayerCharacter()
 {
@@ -36,6 +38,10 @@ void APlayerCharacter::BeginPlay()
 			if (PlayerHUD)
 			{
 				PlayerHUD->AddToPlayerScreen();
+				if (UAGPGameInstance* GameInstance = Cast<UAGPGameInstance>(GetGameInstance()))
+				{
+					GameInstance->HUD = PlayerHUD;
+				}
 			}
 		}
 	}
