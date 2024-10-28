@@ -20,6 +20,9 @@ public:
 	UClass* GetWeaponPickupClass() const;
 	UClass* GetMoneyPickupClass() const;
 	int32 Balance = 0;
+	UPROPERTY(BlueprintReadOnly)
+	ETeam PlayerTeam;
+	UFUNCTION(BlueprintCallable)
 	void UpdateBalance(int32 Change);
 
 	UPROPERTY(EditDefaultsOnly, Category="Pickup Classes")
