@@ -3,6 +3,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/AICharacter.h"
+#include "Characters/PlayerCharacterHUD.h"
 #include "Engine/GameInstance.h"
 #include "AGPGameInstance.generated.h"
 
@@ -20,7 +21,10 @@ public:
 	UClass* GetWeaponPickupClass() const;
 	UClass* GetMoneyPickupClass() const;
 	int32 Balance = 0;
+	ETeam PlayerTeam;
 	void UpdateBalance(int32 Change);
+	UPROPERTY()
+	UPlayerCharacterHUD* HUD;
 
 	UPROPERTY(EditDefaultsOnly, Category="Pickup Classes")
 	TSubclassOf<AAICharacter> AIClass;

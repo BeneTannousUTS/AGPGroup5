@@ -7,6 +7,7 @@
 #include "Pathfinding/NavigationNode.h"
 #include "Pathfinding/PathfindingSubsystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 AProceduralLandscape::AProceduralLandscape()
@@ -14,6 +15,8 @@ AProceduralLandscape::AProceduralLandscape()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
+	bReplicates = true;
+	bNetLoadOnClient = true;
 
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Procedural Mesh"));
 	SetRootComponent(ProceduralMesh);
@@ -24,6 +27,7 @@ void AProceduralLandscape::BeginPlay()
 {
 	Super::BeginPlay();
 	PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>();
+	
 	//GenerateTerrain();
 }
 
@@ -77,6 +81,19 @@ void AProceduralLandscape::ClearLandscape()
 	PathfindingSubsystem->UpdatesNodes(Nodes);
 	ProceduralMesh->ClearMeshSection(0);
 	UKismetSystemLibrary::FlushPersistentDebugLines(GetWorld());
+}
+
+void AProceduralLandscape::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AProceduralLandscape, Vertices);
+	DOREPLIFETIME(AProceduralLandscape, Triangles);
+	DOREPLIFETIME(AProceduralLandscape, UVCoords);
+}
+
+void AProceduralLandscape::OnTerrainGenerated_Implementation()
+{
+	GenerateMesh();
 }
 
 void AProceduralLandscape::RemoveNavNodes()
@@ -1229,6 +1246,7 @@ void AProceduralLandscape::GenerateCliffs()
 
 void AProceduralLandscape::GenerateMesh() const
 {
+	UE_LOG(LogTemp, Log, TEXT("Gen erate Mesh || NetMode: %d"), static_cast<int32>(GetNetMode()));
 	if (ProceduralMesh)
 	{
 		TArray<FVector> Normals;
@@ -1275,14 +1293,16 @@ void AProceduralLandscape::GenerateSafeHouse(FVector SpawnLocation) const
 
 void AProceduralLandscape::GenerateTerrain()
 {
+	ClearLandscape();
 	Width = FMath::RandRange(MinWidth, MaxWidth);
 	Depth = FMath::RandRange(MinDepth, MaxDepth);
 	Height = FMath::RandRange(MinHeight, MaxHeight);
-	
-	ClearLandscape();
+		
 	GenerateBase();
 	GenerateTunnels();
 	GenerateCliffs();
+	
+	
 	GenerateMesh();
 	GenerateSafeHouse(FVector((Width - 1) * VertexSpacing / 2, (Depth - 5) * VertexSpacing + VertexSpacing / 2.0f, 0));
 	GenerateSafeHouse(FVector((Width - 1) * VertexSpacing / 2, 3 * VertexSpacing + VertexSpacing / 2.0f, 0));

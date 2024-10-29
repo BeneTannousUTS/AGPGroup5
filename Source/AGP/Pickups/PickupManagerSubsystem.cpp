@@ -55,14 +55,14 @@ void UPickupManagerSubsystem::SpawnWeaponPickup()
 		{
 			GetWorld()->SpawnActor<APickup>(
 			GameInstance->GetMoneyPickupClass(), SpawnPosition, FRotator::ZeroRotator);
-			GameInstance->UpdateBalance(100);
-			UE_LOG(LogTemp, Display, TEXT("Money Pickup Spawned"));
+			//GameInstance->UpdateBalance(100);
+			//UE_LOG(LogTemp, Display, TEXT("Money Pickup Spawned"));
 		}
 		else
 		{
 			GetWorld()->SpawnActor<APickup>(
 			GameInstance->GetWeaponPickupClass(), SpawnPosition, FRotator::ZeroRotator);
-			UE_LOG(LogTemp, Display, TEXT("Weapon Pickup Spawned"));
+			//UE_LOG(LogTemp, Display, TEXT("Weapon Pickup Spawned"));
 		}
 		
 		

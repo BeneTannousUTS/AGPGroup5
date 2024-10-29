@@ -27,7 +27,7 @@ void ANavigationNode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//return;
+	return;
 
 	FColor SphereColor = FColor::Blue;
 
@@ -61,6 +61,6 @@ void ANavigationNode::Tick(float DeltaTime)
 
 bool ANavigationNode::ShouldTickIfViewportsOnly() const
 {
-	return true;
+	return false;
 }
 
