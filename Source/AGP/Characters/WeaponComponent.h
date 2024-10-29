@@ -20,8 +20,8 @@ struct FWeaponStats
 	GENERATED_BODY()
 public:
 	EWeaponType WeaponType = EWeaponType::Rifle;
-	float Accuracy = 0.4f;
-	float FireRate = 0.6f;
+	float Accuracy = 0.3f;
+	float FireRate = 0.7f;
 	float BaseDamage = 7.0f;
 	int32 MagazineSize = 30;
 	float ReloadTime = 2.5f;

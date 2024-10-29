@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
 #include "AGP/Pathfinding/NavigationNode.h"
-#include "GameFramework/Character.h"
+#include "AGP/Pickups/Pickup.h"
 #include "AICharacter.generated.h"
 
 class UPawnSensingComponent;
@@ -89,6 +89,9 @@ protected:
 	void TickEngage();
 	void TickEvade();
 	void TickCover();
+
+	//Logic for any exceptions to AI logic, i.e. looking for money, healing squad members, etc
+	void CheckSpecialActions();
 	
 	// AI state management
 	UPROPERTY(EditAnywhere)
@@ -122,8 +125,13 @@ protected:
 	TArray<AAICharacter*> NearbyTeamMembers;
 	
 	UPROPERTY(VisibleAnywhere)
-	AAICharacter* SensedCharacter = nullptr;
+	TWeakObjectPtr<AAICharacter> SensedCharacter = nullptr;
 
+	UPROPERTY(VisibleAnywhere)
+	TWeakObjectPtr<APickup> SensedMoney = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+	EAIType AIType = EAIType::Soldier;
 
 	UPROPERTY(VisibleAnywhere)
 	ANavigationNode* TargetNode;
@@ -146,9 +154,6 @@ protected:
 	int ConfidenceLevel = 100;
 
 	void SenseEnemy();
-	
-	UFUNCTION()
-	void OnSensedCharacterDestroyed(AActor* DestroyedActor);
 
 	/**
 	 * Some arbitrary error value for determining how close is close enough before moving onto the next step in the path.
@@ -161,6 +166,8 @@ protected:
 	bool DelayedMoveChange = false;
 
 	FWeaponStats DefaultWeaponStats;
+	FWeaponStats WeaponStats;
+	void SetWeaponStats(EWeaponType Weapon);
 
 	void CalculateNextMoveState();
 
@@ -173,4 +180,5 @@ public:
 private:
 	void UpdateState();
 	bool bNextMoveCanBeSet = true;
+	bool bIgnoreStandardTick = false;
 };
