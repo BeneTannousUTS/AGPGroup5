@@ -53,7 +53,7 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
-void APlayerCharacter::SpawnAI()
+void APlayerCharacter::SpawnAI(EAIType AIType)
 {
 	UAGPGameInstance* AGPGameInstance = Cast<UAGPGameInstance>(GetGameInstance());
 
@@ -65,10 +65,10 @@ void APlayerCharacter::SpawnAI()
 	
 	if (HasAuthority())
 	{
-		AISpawnImplementation(ETeam::Team1);
+		AISpawnImplementation(ETeam::Team1, AIType);
 	}else
 	{
-		ServerAISpawn(ETeam::Team2);
+		ServerAISpawn(ETeam::Team2, AIType);
 	}
 }
 
@@ -121,7 +121,7 @@ void APlayerCharacter::FireWeapon(const FInputActionValue& Value)
 	}
 }
 
-void APlayerCharacter::AISpawnImplementation(ETeam AITeam)
+void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 {
 	// Assuming this is now called on the server
 	if (UAGPGameInstance* GameInstance =
@@ -156,12 +156,12 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam)
 }
 
 
-void APlayerCharacter::ServerAISpawn_Implementation(ETeam AITeam)
+void APlayerCharacter::ServerAISpawn_Implementation(ETeam AITeam, EAIType AIType)
 {
 	if (HasAuthority())
 	{
 		UE_LOG(LogTemp, Log, TEXT("ServerAISpawn called on the server"));
-		AISpawnImplementation(AITeam);
+		AISpawnImplementation(AITeam, AIType);
 	}
 	else
 	{

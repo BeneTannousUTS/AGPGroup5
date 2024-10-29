@@ -39,7 +39,7 @@ void AAICharacter::BeginPlay()
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AAICharacter::OnSensedPawn);
 	}
 
-	EquipWeapon(bHasWeapon, DefaultWeaponStats);
+	
 }
 
 void AAICharacter::TickFollowLeader()
@@ -262,6 +262,8 @@ void AAICharacter::SetWeaponStats(EWeaponType Weapon)
 		WeaponStats.BaseDamage = 4.0f;
 		WeaponStats.MagazineSize = 6;
 		WeaponStats.ReloadTime = 3;
+
+		EquipWeapon(bHasWeapon, WeaponStats);
 		break;
 	case EWeaponType::Sniper:
 		WeaponStats.WeaponType = EWeaponType::Sniper;
@@ -270,9 +272,13 @@ void AAICharacter::SetWeaponStats(EWeaponType Weapon)
 		WeaponStats.BaseDamage = 50.0f;
 		WeaponStats.MagazineSize = 5;
 		WeaponStats.ReloadTime = 15;
+		
+		EquipWeapon(bHasWeapon, WeaponStats);
 		break;
 	case EWeaponType::Rifle:
 		WeaponStats = DefaultWeaponStats;
+		
+		EquipWeapon(bHasWeapon, WeaponStats);
 		break;
 	}
 }
