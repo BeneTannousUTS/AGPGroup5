@@ -2,6 +2,8 @@
 #include "AGPGameInstance.h"
 
 #include "Characters/AICharacter.h"
+#include "GameFramework/PlayerStart.h"
+#include "Kismet/GameplayStatics.h"
 #include "Pickups/Pickup.h"
 
  UClass* UAGPGameInstance::GetWeaponPickupClass() const
@@ -24,5 +26,3 @@
  {
   return AIClass.Get();
  }
-
-

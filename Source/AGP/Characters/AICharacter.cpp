@@ -5,6 +5,7 @@
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SquadSubsystem.h"
+#include "Net/UnrealNetwork.h"
 #include "Perception/PawnSensingComponent.h"
 
 AAICharacter::AAICharacter(): PathfindingSubsystem(nullptr), SquadSubsystem(nullptr), SquadLeader(nullptr)
@@ -12,6 +13,12 @@ AAICharacter::AAICharacter(): PathfindingSubsystem(nullptr), SquadSubsystem(null
 	PrimaryActorTick.bCanEverTick = true;
 
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
+}
+
+void AAICharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AAICharacter, AITeam)
 }
 
 ETeam AAICharacter::GetTeam()
@@ -36,6 +43,7 @@ void AAICharacter::BeginPlay()
 
 void AAICharacter::TickFollowLeader()
 {
+	GetCharacterMovement()->MaxWalkSpeed = 700.0f;
 	if(!CurrentPath.IsEmpty())
 	{
 		CurrentPath.Empty();

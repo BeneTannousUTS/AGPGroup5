@@ -64,7 +64,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	ETeam GetTeam();
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
 	ETeam AITeam = ETeam::Team1;
 
 	UFUNCTION(BlueprintCallable)
@@ -72,7 +72,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool GetCrouchState();
-	
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 protected:
 	friend class USquadSubsystem;
@@ -94,7 +95,7 @@ protected:
 	EAIState CurrentState = EAIState::Patrol;
 
 	UPROPERTY(EditAnywhere)
-	EMoveState MovementState = EMoveState::WALKING;
+	EMoveState MovementState = EMoveState::RUNNING;
 
 	UPROPERTY()
 	UPathfindingSubsystem* PathfindingSubsystem;
