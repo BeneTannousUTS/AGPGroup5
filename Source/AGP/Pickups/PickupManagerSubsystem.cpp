@@ -64,10 +64,6 @@ void UPickupManagerSubsystem::SpawnWeaponPickup()
 			GameInstance->GetWeaponPickupClass(), SpawnPosition, FRotator::ZeroRotator);
 			//UE_LOG(LogTemp, Display, TEXT("Weapon Pickup Spawned"));
 		}
-		
-		
-
-		
 	}
 	else
 	{

@@ -91,7 +91,10 @@ protected:
 	void TickCover();
 
 	//Logic for any exceptions to AI logic, i.e. looking for money, healing squad members, etc
-	void CheckSpecialActions();
+	void CheckSpecialActions(float DeltaTime);
+	void ScoutTick();
+	void MedicTick(float DeltaTime);
+	void SniperTick();
 	
 	// AI state management
 	UPROPERTY(EditAnywhere)
@@ -113,7 +116,10 @@ protected:
 	TArray<FVector> CurrentPath;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	AAICharacter* SquadLeader;
+	TWeakObjectPtr<AAICharacter> SquadLeader;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TWeakObjectPtr<AAICharacter> SquadMemberToHeal;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsLeader();
@@ -130,7 +136,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TWeakObjectPtr<APickup> SensedMoney = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing=SetAIType)
 	EAIType AIType = EAIType::Soldier;
 
 	UPROPERTY(VisibleAnywhere)
@@ -180,10 +186,15 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EWeaponType GetWeaponType();
 
+	//TODO: REPLICATE THIS
+	UFUNCTION()
 	void SetAIType(EAIType AITypeToSet);
 
 private:
 	void UpdateState();
+	bool bCanBreakFromSquad = false;
 	bool bNextMoveCanBeSet = true;
 	bool bIgnoreStandardTick = false;
+	bool bIsBeingHealed = false;
+	float TimeSinceLastHeal = 0;
 };
