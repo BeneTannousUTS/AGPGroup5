@@ -177,6 +177,11 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	FVector GetCircleFormationOffset(int32 MemberIndex, int32 SquadSize);
 
+	UFUNCTION(BlueprintCallable)
+	EWeaponType GetWeaponType();
+
+	void SetAIType(EAIType AITypeToSet);
+
 private:
 	void UpdateState();
 	bool bNextMoveCanBeSet = true;

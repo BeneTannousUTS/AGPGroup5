@@ -145,6 +145,7 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 				if (SpawnedAI)
 				{
 					SpawnedAI->AITeam = AITeam;
+					SpawnedAI->SetAIType(AIType);
 					UE_LOG(LogTemp, Log, TEXT("Spawned AI for Team %s at %s"), *SpawnTag.ToString(), *SpawnTransform.ToString());
 				}
 				return; // Exit after spawning at the first valid location

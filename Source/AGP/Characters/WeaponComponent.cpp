@@ -107,3 +107,8 @@ bool UWeaponComponent::IsMagazineEmpty()
 	}
 	return true;
 }
+
+EWeaponType UWeaponComponent::GetWeaponType()
+{
+	return WeaponStats.WeaponType;
+}

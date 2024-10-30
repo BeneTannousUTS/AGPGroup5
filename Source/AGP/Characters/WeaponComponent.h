@@ -60,6 +60,7 @@ public:
 
 	bool IsMagazineEmpty();
 
+	EWeaponType GetWeaponType();
 private:
 	int ShotsLeft;
 		

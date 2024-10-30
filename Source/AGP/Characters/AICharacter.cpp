@@ -38,8 +38,6 @@ void AAICharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AAICharacter::OnSensedPawn);
 	}
-
-	
 }
 
 void AAICharacter::TickFollowLeader()
@@ -253,6 +251,8 @@ void AAICharacter::SenseEnemy()
 
 void AAICharacter::SetWeaponStats(EWeaponType Weapon)
 {
+	
+	
 	switch (Weapon)
 	{
 	case EWeaponType::Pistol:
@@ -473,6 +473,32 @@ FVector AAICharacter::GetCircleFormationOffset(int32 MemberIndex, int32 SquadSiz
 	float OffsetY = Radius * FMath::Sin(AngleInRadians);
 
 	return FVector(OffsetX, OffsetY, 0.0f);
+}
+
+EWeaponType AAICharacter::GetWeaponType()
+{
+	if (!WeaponComponent) 
+	{
+		UE_LOG(LogTemp, Error, TEXT("WeaponComponent is null in %s"), *GetName());
+		return EWeaponType::Rifle;
+	}
+	
+	return WeaponComponent->GetWeaponType();
+}
+
+void AAICharacter::SetAIType(EAIType AITypeToSet)
+{
+	AIType = AITypeToSet;
+
+	if(AIType == EAIType::Medic || AIType == EAIType::Scout)
+	{
+		SetWeaponStats(Pistol);
+	}else if(AIType == EAIType::Sniper){
+		SetWeaponStats(Sniper);
+	}else
+	{
+		SetWeaponStats(Rifle);
+	}
 }
 
 void AAICharacter::Tick(float DeltaTime)
