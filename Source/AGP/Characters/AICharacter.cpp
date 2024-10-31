@@ -12,14 +12,18 @@
 AAICharacter::AAICharacter(): PathfindingSubsystem(nullptr), SquadSubsystem(nullptr), SquadLeader(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
 }
 
 void AAICharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AAICharacter, AITeam)
+	DOREPLIFETIME(AAICharacter, AITeam);
+	DOREPLIFETIME(AAICharacter, AIType);
+	DOREPLIFETIME(AAICharacter, SquadLeader);
+	DOREPLIFETIME(AAICharacter, MovementState);
+	DOREPLIFETIME(AAICharacter, CurrentState);
 }
 
 ETeam AAICharacter::GetTeam()
@@ -38,6 +42,16 @@ void AAICharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AAICharacter::OnSensedPawn);
 	}
+
+	if (WeaponComponent)
+	{
+		MulticastSetupAI(AITeam, AIType);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WeaponComponent is null on MulticastSetupAI call."));
+	}
+
 }
 
 void AAICharacter::TickFollowLeader()
@@ -337,6 +351,20 @@ void AAICharacter::CalculateNextMoveState()
 	//UE_LOG(LogTemp, Warning, TEXT("Next Move state calculated"));
 }
 
+void AAICharacter::OnRep_MoveState()
+{
+	UpdateMoveState();
+}
+
+void AAICharacter::MulticastSetupAI_Implementation(ETeam InAITeam, EAIType InAIType)
+{
+	AITeam = InAITeam;
+	SetAIType(InAIType); // Custom function to set AI type
+
+	// Log for debugging purposes
+	UE_LOG(LogTemp, Log, TEXT("Multicast_SetupAI called: Team = %d, Type = %d"), (int)AITeam, (int)InAIType);
+}
+
 void AAICharacter::UpdateMoveState()
 {
 	UCharacterMovementComponent* MovementComponent = GetCharacterMovement();
@@ -438,6 +466,17 @@ bool AAICharacter::IsLeader()
 	}
 	return false;
 }
+
+
+void AAICharacter::ServerUpdateMoveState_Implementation(EAIState NewState)
+{
+	if (HasAuthority())
+	{
+		CurrentState = NewState;
+		OnRep_MoveState();
+	}
+}
+
 
 void AAICharacter::MoveAlongPath()
 {

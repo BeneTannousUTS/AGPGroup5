@@ -94,10 +94,10 @@ protected:
 	void CheckSpecialActions();
 	
 	// AI state management
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 	EAIState CurrentState = EAIState::Patrol;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 	EMoveState MovementState = EMoveState::RUNNING;
 
 	UPROPERTY()
@@ -112,7 +112,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TArray<FVector> CurrentPath;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
 	AAICharacter* SquadLeader;
 
 	UFUNCTION(BlueprintCallable)
@@ -145,6 +145,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	EMoveState NextMoveState;
 
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateMoveState(EAIState NewState);
+
 	// Movement and pathfinding
 	void MoveAlongPath();
 	
@@ -170,6 +173,12 @@ protected:
 	void SetWeaponStats(EWeaponType Weapon);
 
 	void CalculateNextMoveState();
+	
+	UFUNCTION()
+	void OnRep_MoveState();
+
+	UFUNCTION()
+	void SetAIType(EAIType AITypeToSet);
 
 public:
 	void UpdateMoveState();
@@ -180,7 +189,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EWeaponType GetWeaponType();
 
-	void SetAIType(EAIType AITypeToSet);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastSetupAI(ETeam InAITeam, EAIType InAIType);
 
 private:
 	void UpdateState();
