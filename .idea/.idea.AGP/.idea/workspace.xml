@@ -9,8 +9,12 @@
   <component name="ChangeListManager">
     <list default="true" id="0ca479de-55cc-45b9-afed-41413260bf9d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/PickupManagerSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/PickupManagerSubsystem.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/AnimBP_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/AnimBP_Mannequin.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/AGPGameModeBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/AGPGameModeBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/AGPGameModeBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/AGPGameModeBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/WeaponComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/WeaponComponent.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,31 +40,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "ai-collecting-money",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "advanced.settings",
-    "settings.editor.splitter.proportion": "0.2609582",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;ai-collecting-money&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;advanced.settings&quot;,
+    &quot;settings.editor.splitter.proportion&quot;: &quot;0.2609582&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\zacsl\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\zacsl\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\zacsl\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\zacsl\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\zacsl\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\zacsl\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration name="AGP" type="CppProject" factoryName="C++ Project">
       <configuration_1>
@@ -163,6 +167,7 @@
       <workItem from="1730190398010" duration="7366000" />
       <workItem from="1730283919953" duration="3811000" />
       <workItem from="1730347649331" duration="703000" />
+      <workItem from="1730349591680" duration="1330000" />
     </task>
     <servers />
   </component>

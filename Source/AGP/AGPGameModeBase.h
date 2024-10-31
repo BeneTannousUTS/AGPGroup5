@@ -14,4 +14,11 @@ UCLASS()
 class AGP_API AAGPGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+public:
+	AAGPGameModeBase();
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
+
+private:
+	int32 PlayerCount = 0;
 };

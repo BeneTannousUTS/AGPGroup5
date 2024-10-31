@@ -201,8 +201,3 @@ EWeaponType UWeaponComponent::GetWeaponType()
 {
 	return WeaponStats.WeaponType;
 }
-
-EWeaponType UWeaponComponent::GetWeaponType()
-{
-	return WeaponStats.WeaponType;
-}
