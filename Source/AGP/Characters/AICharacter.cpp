@@ -47,7 +47,7 @@ void AAICharacter::TickFollowLeader()
 	{
 		CurrentPath.Empty();
 	}
-	if (!SquadLeader.IsValid() || SquadMembers.IsEmpty()) return;
+	if (!SquadLeader || SquadMembers.IsEmpty()) return;
 
 	int32 Index = SquadLeader->SquadMembers.Find(this);
 	FVector FormationOffset = GetCircleFormationOffset(Index, SquadMembers.Num());
@@ -174,26 +174,29 @@ void AAICharacter::TickCover()
 	//TODO DURING ASSESSMENT 4
 	CurrentPath.Empty();
 
-	FVector CoverVector = PathfindingSubsystem->FindObjectWithTag(GetActorLocation(), FName("RockObstacle"));
+	FVector CoverVector = PathfindingSubsystem->FindInMap(GetActorLocation(), FName("RockObstacle"));
 
 	CurrentPath.Add(CoverVector);
 }
 
-void AAICharacter::CheckSpecialActions(float DeltaTime)
+void AAICharacter::CheckSpecialActions()
 {
-	if(HealthComponent->GetCurrentHealth() < 35) //If badly hurt, seek cover
-	{
-		CurrentState = EAIState::Cover;
-		return;
-	}
-	
-	switch (AIType)
+	EAIType	Type = AIType;
+
+	switch (Type)
 	{
 	case EAIType::Scout:
-		ScoutTick();
+		if(SensedMoney.IsValid())
+		{
+			bIgnoreStandardTick = true;
+			
+		}else
+		{
+			bIgnoreStandardTick = false;
+		}
 		break;
 	case EAIType::Medic:
-		MedicTick(DeltaTime);
+		//Medic logic function
 		break;
 	case EAIType::Sniper:
 		//Sniper logic function (if time permits)
@@ -202,62 +205,6 @@ void AAICharacter::CheckSpecialActions(float DeltaTime)
 		bIgnoreStandardTick = false;
 		break;
 	}
-}
-
-void AAICharacter::ScoutTick()
-{
-	if(SensedMoney.IsValid()) //Check if there is any target money pickup
-	{
-		if(!bIgnoreStandardTick) //Only add money to the path if there is not already a target pickup
-		{
-			FVector MoneyVector = PathfindingSubsystem->FindObjectWithTag(GetActorLocation(), FName("MoneyPickup"));
-			CurrentPath.Empty();
-			CurrentPath.Add(MoneyVector);
-			bIgnoreStandardTick = true;
-		}
-		MoveAlongPath();
-	}
-	else //If no target money, tick the standard states
-	{
-		bIgnoreStandardTick = false;
-	}
-}
-
-void AAICharacter::MedicTick(float DeltaTime)
-{
-	if(!SquadMemberToHeal.IsValid()) //Check that there is a Squad member to heal
-	{
-		float LowestHP = 100;
-		for (AAICharacter* Member : SquadMembers) // Pick Squad Member with the lowest HP to heal
-		{
-			if(Member->HealthComponent->GetCurrentHealth() < LowestHP)
-			{
-				SquadMemberToHeal = Member;
-				LowestHP = Member->HealthComponent->GetCurrentHealth();
-			}
-		}
-	}
-	else if(SquadMemberToHeal.Get()->HealthComponent->GetCurrentHealth()/100 < 80.0f
-		&& TimeSinceLastHeal >= 1.0f) //If Squad member to heal's HP is lower than 80%, apply 5 HP per second of healing
-	{
-		SquadMemberToHeal.Get()->HealthComponent->ApplyHealing(5);
-		TimeSinceLastHeal += DeltaTime;
-		bIgnoreStandardTick = true;
-	}
-	else if(SquadMemberToHeal.Get()->HealthComponent->GetCurrentHealth()/100 >= 80.0f) //If Squad member being healed is 80% HP or more then stop healing.
-	{
-		SquadMemberToHeal.Reset();
-		bIgnoreStandardTick = false;
-	}
-	else
-	{
-		bIgnoreStandardTick = false;
-	}
-}
-
-void AAICharacter::SniperTick()
-{
-	return;
 }
 
 EMoveState AAICharacter::GetMoveState()
@@ -557,11 +504,9 @@ void AAICharacter::SetAIType(EAIType AITypeToSet)
 void AAICharacter::Tick(float DeltaTime)
  {
  	Super::Tick(DeltaTime);
-
-	CheckSpecialActions(DeltaTime);
-	
+ 
  	// Handle squad behavior via the subsystem
- 	if (SquadSubsystem && !bIgnoreStandardTick)
+ 	if (SquadSubsystem)
  	{
  		SquadSubsystem->DetectNearbySquadMembers(this);
  		SquadSubsystem->AssignSquadLeader(this);
@@ -573,9 +518,8 @@ void AAICharacter::Tick(float DeltaTime)
 	{
 		CalculateNextMoveState();
 	}
-
 	
  	SenseEnemy();
-	if(!bIgnoreStandardTick) UpdateState();
+ 	UpdateState();
  	UpdateMoveState();
  }
