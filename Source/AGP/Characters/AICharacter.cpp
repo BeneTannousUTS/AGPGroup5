@@ -5,6 +5,7 @@
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SquadSubsystem.h"
+#include "AGP/Pickups/Pickup.h"
 #include "Net/UnrealNetwork.h"
 #include "Perception/PawnSensingComponent.h"
 
@@ -37,8 +38,6 @@ void AAICharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AAICharacter::OnSensedPawn);
 	}
-
-	EquipWeapon(bHasWeapon, DefaultWeaponStats);
 }
 
 void AAICharacter::TickFollowLeader()
@@ -48,7 +47,7 @@ void AAICharacter::TickFollowLeader()
 	{
 		CurrentPath.Empty();
 	}
-	if (!SquadLeader || SquadMembers.IsEmpty()) return;
+	if (!SquadLeader.IsValid() || SquadMembers.IsEmpty()) return;
 
 	int32 Index = SquadLeader->SquadMembers.Find(this);
 	FVector FormationOffset = GetCircleFormationOffset(Index, SquadMembers.Num());
@@ -64,7 +63,7 @@ void AAICharacter::TickFollowLeader()
 		AddMovementInput(MovementDirection);
 	}
 
-	if(SensedCharacter)
+	if(SensedCharacter.Get())
 	{
 		if (HasWeapon())
 		{
@@ -89,7 +88,7 @@ void AAICharacter::TickPatrol()
 
 void AAICharacter::TickEngage()
 {
-	if (!SensedCharacter || !IsValid(SensedCharacter))
+	if (!SensedCharacter.IsValid())
 	{
 		CurrentState = EAIState::Patrol;
 		return;
@@ -147,14 +146,14 @@ void AAICharacter::TickEngage()
 void AAICharacter::TickEvade()
 {
 	// Find the player and return if it can't find it.
-	if (SensedCharacter)
+	if (SensedCharacter.IsValid())
 	{
 		bIsRunningFromEnemy = true;
 		if (CurrentPath.IsEmpty())
 		{
 			CurrentPath = PathfindingSubsystem->GetPathAway(GetActorLocation(), SensedCharacter->GetActorLocation());
 		}
-	}else if(!SensedCharacter)
+	}else if(!SensedCharacter.IsValid())
 	{
 		if (bIsRunningFromEnemy)
 		{
@@ -175,9 +174,90 @@ void AAICharacter::TickCover()
 	//TODO DURING ASSESSMENT 4
 	CurrentPath.Empty();
 
-	FVector CoverVector = PathfindingSubsystem->FindCover(GetActorLocation(), FName("RockObstacle"));
+	FVector CoverVector = PathfindingSubsystem->FindObjectWithTag(GetActorLocation(), FName("RockObstacle"));
 
 	CurrentPath.Add(CoverVector);
+}
+
+void AAICharacter::CheckSpecialActions(float DeltaTime)
+{
+	if(HealthComponent->GetCurrentHealth() < 35) //If badly hurt, seek cover
+	{
+		CurrentState = EAIState::Cover;
+		return;
+	}
+	
+	switch (AIType)
+	{
+	case EAIType::Scout:
+		ScoutTick();
+		break;
+	case EAIType::Medic:
+		MedicTick(DeltaTime);
+		break;
+	case EAIType::Sniper:
+		//Sniper logic function (if time permits)
+		break;
+	case EAIType::Soldier:
+		bIgnoreStandardTick = false;
+		break;
+	}
+}
+
+void AAICharacter::ScoutTick()
+{
+	if(SensedMoney.IsValid()) //Check if there is any target money pickup
+	{
+		if(!bIgnoreStandardTick) //Only add money to the path if there is not already a target pickup
+		{
+			FVector MoneyVector = PathfindingSubsystem->FindObjectWithTag(GetActorLocation(), FName("MoneyPickup"));
+			CurrentPath.Empty();
+			CurrentPath.Add(MoneyVector);
+			bIgnoreStandardTick = true;
+		}
+		MoveAlongPath();
+	}
+	else //If no target money, tick the standard states
+	{
+		bIgnoreStandardTick = false;
+	}
+}
+
+void AAICharacter::MedicTick(float DeltaTime)
+{
+	if(!SquadMemberToHeal.IsValid()) //Check that there is a Squad member to heal
+	{
+		float LowestHP = 100;
+		for (AAICharacter* Member : SquadMembers) // Pick Squad Member with the lowest HP to heal
+		{
+			if(Member->HealthComponent->GetCurrentHealth() < LowestHP)
+			{
+				SquadMemberToHeal = Member;
+				LowestHP = Member->HealthComponent->GetCurrentHealth();
+			}
+		}
+	}
+	else if(SquadMemberToHeal.Get()->HealthComponent->GetCurrentHealth()/100 < 80.0f
+		&& TimeSinceLastHeal >= 1.0f) //If Squad member to heal's HP is lower than 80%, apply 5 HP per second of healing
+	{
+		SquadMemberToHeal.Get()->HealthComponent->ApplyHealing(5);
+		TimeSinceLastHeal += DeltaTime;
+		bIgnoreStandardTick = true;
+	}
+	else if(SquadMemberToHeal.Get()->HealthComponent->GetCurrentHealth()/100 >= 80.0f) //If Squad member being healed is 80% HP or more then stop healing.
+	{
+		SquadMemberToHeal.Reset();
+		bIgnoreStandardTick = false;
+	}
+	else
+	{
+		bIgnoreStandardTick = false;
+	}
+}
+
+void AAICharacter::SniperTick()
+{
+	return;
 }
 
 EMoveState AAICharacter::GetMoveState()
@@ -193,49 +273,68 @@ bool AAICharacter::GetCrouchState()
 void AAICharacter::OnSensedPawn(APawn* SensedActor)
 {
 	AAICharacter* PotentialEnemy = Cast<AAICharacter>(SensedActor);
+	APickup* TargetMoney = Cast<APickup>(SensedActor);
 	if (PotentialEnemy)
 	{
 		// Check if the sensed character is on a different team
 		if (PotentialEnemy->GetTeam() != GetTeam())
 		{
-			// Unbind the OnDestroyed event of the previously sensed character
-			if (SensedCharacter)
-			{
-				SensedCharacter->OnDestroyed.RemoveDynamic(this, &AAICharacter::OnSensedCharacterDestroyed);
-			}
-
 			// Set the new sensed character
 			SensedCharacter = PotentialEnemy;
-
-			// Bind to the OnDestroyed event to clear the reference when the character is destroyed
-			SensedCharacter->OnDestroyed.AddDynamic(this, &AAICharacter::OnSensedCharacterDestroyed);
             
 			SquadSubsystem->SuggestTargetToLeader(this, PotentialEnemy);
 		}
+	}else if(TargetMoney)
+	{
+		SensedMoney = TargetMoney;
 	}
 }
 
 void AAICharacter::SenseEnemy()
 {
-	if (!SensedCharacter) return;
+	if (!SensedCharacter.IsValid()) return;
 	if (PawnSensingComponent)
 	{
-		if (!PawnSensingComponent->HasLineOfSightTo(SensedCharacter))
+		if (!PawnSensingComponent->HasLineOfSightTo(SensedCharacter.Get()))
 		{
 			SensedCharacter = nullptr;
 		}
 	}
 }
 
-void AAICharacter::OnSensedCharacterDestroyed(AActor* DestroyedActor)
+void AAICharacter::SetWeaponStats(EWeaponType Weapon)
 {
-	if (SensedCharacter == DestroyedActor)
+	
+	
+	switch (Weapon)
 	{
-		// Clear the reference to the sensed character
-		SensedCharacter = nullptr;
+	case EWeaponType::Pistol:
+		WeaponStats.WeaponType = EWeaponType::Pistol;
+		WeaponStats.Accuracy = 0.5f;
+		WeaponStats.FireRate = 0.9f;
+		WeaponStats.BaseDamage = 4.0f;
+		WeaponStats.MagazineSize = 6;
+		WeaponStats.ReloadTime = 3;
+
+		EquipWeapon(bHasWeapon, WeaponStats);
+		break;
+	case EWeaponType::Sniper:
+		WeaponStats.WeaponType = EWeaponType::Sniper;
+		WeaponStats.Accuracy = 1.0f;
+		WeaponStats.FireRate = 7.0f;
+		WeaponStats.BaseDamage = 50.0f;
+		WeaponStats.MagazineSize = 5;
+		WeaponStats.ReloadTime = 15;
+		
+		EquipWeapon(bHasWeapon, WeaponStats);
+		break;
+	case EWeaponType::Rifle:
+		WeaponStats = DefaultWeaponStats;
+		
+		EquipWeapon(bHasWeapon, WeaponStats);
+		break;
 	}
 }
-
 
 void AAICharacter::CalculateNextMoveState()
 {
@@ -429,12 +528,40 @@ FVector AAICharacter::GetCircleFormationOffset(int32 MemberIndex, int32 SquadSiz
 	return FVector(OffsetX, OffsetY, 0.0f);
 }
 
+EWeaponType AAICharacter::GetWeaponType()
+{
+	if (!WeaponComponent) 
+	{
+		UE_LOG(LogTemp, Error, TEXT("WeaponComponent is null in %s"), *GetName());
+		return EWeaponType::Rifle;
+	}
+	
+	return WeaponComponent->GetWeaponType();
+}
+
+void AAICharacter::SetAIType(EAIType AITypeToSet)
+{
+	AIType = AITypeToSet;
+
+	if(AIType == EAIType::Medic || AIType == EAIType::Scout)
+	{
+		SetWeaponStats(Pistol);
+	}else if(AIType == EAIType::Sniper){
+		SetWeaponStats(Sniper);
+	}else
+	{
+		SetWeaponStats(Rifle);
+	}
+}
+
 void AAICharacter::Tick(float DeltaTime)
  {
  	Super::Tick(DeltaTime);
- 
+
+	CheckSpecialActions(DeltaTime);
+	
  	// Handle squad behavior via the subsystem
- 	if (SquadSubsystem)
+ 	if (SquadSubsystem && !bIgnoreStandardTick)
  	{
  		SquadSubsystem->DetectNearbySquadMembers(this);
  		SquadSubsystem->AssignSquadLeader(this);
@@ -446,9 +573,10 @@ void AAICharacter::Tick(float DeltaTime)
 	{
 		CalculateNextMoveState();
 	}
+
 	
  	SenseEnemy();
- 	UpdateState();
+	if(!bIgnoreStandardTick) UpdateState();
  	UpdateMoveState();
  }
  
