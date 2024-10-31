@@ -52,7 +52,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	UFUNCTION(BlueprintCallable)
-	void SpawnAI(EAIType AIType);
+	void SpawnAI();
 	
 private:
 	
@@ -60,8 +60,8 @@ private:
 	void Look(const FInputActionValue& Value);
 	void FireWeapon(const FInputActionValue& Value);
 
-	void AISpawnImplementation(ETeam AITeam, EAIType AIType);
+	void AISpawnImplementation(ETeam AITeam);
 	UFUNCTION(Server, Reliable)
-	void ServerAISpawn(ETeam AITeam, EAIType AIType);
+	void ServerAISpawn(ETeam AITeam);
 
 };

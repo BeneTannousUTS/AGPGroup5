@@ -5,7 +5,6 @@
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SquadSubsystem.h"
-#include "AGP/Pickups/Pickup.h"
 #include "Net/UnrealNetwork.h"
 #include "Perception/PawnSensingComponent.h"
 
@@ -38,6 +37,8 @@ void AAICharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AAICharacter::OnSensedPawn);
 	}
+
+	EquipWeapon(bHasWeapon, DefaultWeaponStats);
 }
 
 void AAICharacter::TickFollowLeader()
@@ -63,7 +64,7 @@ void AAICharacter::TickFollowLeader()
 		AddMovementInput(MovementDirection);
 	}
 
-	if(SensedCharacter.Get())
+	if(SensedCharacter)
 	{
 		if (HasWeapon())
 		{
@@ -88,7 +89,7 @@ void AAICharacter::TickPatrol()
 
 void AAICharacter::TickEngage()
 {
-	if (!SensedCharacter.IsValid())
+	if (!SensedCharacter || !IsValid(SensedCharacter))
 	{
 		CurrentState = EAIState::Patrol;
 		return;
@@ -146,14 +147,14 @@ void AAICharacter::TickEngage()
 void AAICharacter::TickEvade()
 {
 	// Find the player and return if it can't find it.
-	if (SensedCharacter.IsValid())
+	if (SensedCharacter)
 	{
 		bIsRunningFromEnemy = true;
 		if (CurrentPath.IsEmpty())
 		{
 			CurrentPath = PathfindingSubsystem->GetPathAway(GetActorLocation(), SensedCharacter->GetActorLocation());
 		}
-	}else if(!SensedCharacter.IsValid())
+	}else if(!SensedCharacter)
 	{
 		if (bIsRunningFromEnemy)
 		{
@@ -174,37 +175,9 @@ void AAICharacter::TickCover()
 	//TODO DURING ASSESSMENT 4
 	CurrentPath.Empty();
 
-	FVector CoverVector = PathfindingSubsystem->FindInMap(GetActorLocation(), FName("RockObstacle"));
+	FVector CoverVector = PathfindingSubsystem->FindCover(GetActorLocation(), FName("RockObstacle"));
 
 	CurrentPath.Add(CoverVector);
-}
-
-void AAICharacter::CheckSpecialActions()
-{
-	EAIType	Type = AIType;
-
-	switch (Type)
-	{
-	case EAIType::Scout:
-		if(SensedMoney.IsValid())
-		{
-			bIgnoreStandardTick = true;
-			
-		}else
-		{
-			bIgnoreStandardTick = false;
-		}
-		break;
-	case EAIType::Medic:
-		//Medic logic function
-		break;
-	case EAIType::Sniper:
-		//Sniper logic function (if time permits)
-		break;
-	case EAIType::Soldier:
-		bIgnoreStandardTick = false;
-		break;
-	}
 }
 
 EMoveState AAICharacter::GetMoveState()
@@ -220,68 +193,49 @@ bool AAICharacter::GetCrouchState()
 void AAICharacter::OnSensedPawn(APawn* SensedActor)
 {
 	AAICharacter* PotentialEnemy = Cast<AAICharacter>(SensedActor);
-	APickup* TargetMoney = Cast<APickup>(SensedActor);
 	if (PotentialEnemy)
 	{
 		// Check if the sensed character is on a different team
 		if (PotentialEnemy->GetTeam() != GetTeam())
 		{
+			// Unbind the OnDestroyed event of the previously sensed character
+			if (SensedCharacter)
+			{
+				SensedCharacter->OnDestroyed.RemoveDynamic(this, &AAICharacter::OnSensedCharacterDestroyed);
+			}
+
 			// Set the new sensed character
 			SensedCharacter = PotentialEnemy;
+
+			// Bind to the OnDestroyed event to clear the reference when the character is destroyed
+			SensedCharacter->OnDestroyed.AddDynamic(this, &AAICharacter::OnSensedCharacterDestroyed);
             
 			SquadSubsystem->SuggestTargetToLeader(this, PotentialEnemy);
 		}
-	}else if(TargetMoney)
-	{
-		SensedMoney = TargetMoney;
 	}
 }
 
 void AAICharacter::SenseEnemy()
 {
-	if (!SensedCharacter.IsValid()) return;
+	if (!SensedCharacter) return;
 	if (PawnSensingComponent)
 	{
-		if (!PawnSensingComponent->HasLineOfSightTo(SensedCharacter.Get()))
+		if (!PawnSensingComponent->HasLineOfSightTo(SensedCharacter))
 		{
 			SensedCharacter = nullptr;
 		}
 	}
 }
 
-void AAICharacter::SetWeaponStats(EWeaponType Weapon)
+void AAICharacter::OnSensedCharacterDestroyed(AActor* DestroyedActor)
 {
-	
-	
-	switch (Weapon)
+	if (SensedCharacter == DestroyedActor)
 	{
-	case EWeaponType::Pistol:
-		WeaponStats.WeaponType = EWeaponType::Pistol;
-		WeaponStats.Accuracy = 0.5f;
-		WeaponStats.FireRate = 0.9f;
-		WeaponStats.BaseDamage = 4.0f;
-		WeaponStats.MagazineSize = 6;
-		WeaponStats.ReloadTime = 3;
-
-		EquipWeapon(bHasWeapon, WeaponStats);
-		break;
-	case EWeaponType::Sniper:
-		WeaponStats.WeaponType = EWeaponType::Sniper;
-		WeaponStats.Accuracy = 1.0f;
-		WeaponStats.FireRate = 7.0f;
-		WeaponStats.BaseDamage = 50.0f;
-		WeaponStats.MagazineSize = 5;
-		WeaponStats.ReloadTime = 15;
-		
-		EquipWeapon(bHasWeapon, WeaponStats);
-		break;
-	case EWeaponType::Rifle:
-		WeaponStats = DefaultWeaponStats;
-		
-		EquipWeapon(bHasWeapon, WeaponStats);
-		break;
+		// Clear the reference to the sensed character
+		SensedCharacter = nullptr;
 	}
 }
+
 
 void AAICharacter::CalculateNextMoveState()
 {
@@ -473,32 +427,6 @@ FVector AAICharacter::GetCircleFormationOffset(int32 MemberIndex, int32 SquadSiz
 	float OffsetY = Radius * FMath::Sin(AngleInRadians);
 
 	return FVector(OffsetX, OffsetY, 0.0f);
-}
-
-EWeaponType AAICharacter::GetWeaponType()
-{
-	if (!WeaponComponent) 
-	{
-		UE_LOG(LogTemp, Error, TEXT("WeaponComponent is null in %s"), *GetName());
-		return EWeaponType::Rifle;
-	}
-	
-	return WeaponComponent->GetWeaponType();
-}
-
-void AAICharacter::SetAIType(EAIType AITypeToSet)
-{
-	AIType = AITypeToSet;
-
-	if(AIType == EAIType::Medic || AIType == EAIType::Scout)
-	{
-		SetWeaponStats(Pistol);
-	}else if(AIType == EAIType::Sniper){
-		SetWeaponStats(Sniper);
-	}else
-	{
-		SetWeaponStats(Rifle);
-	}
 }
 
 void AAICharacter::Tick(float DeltaTime)

@@ -53,7 +53,7 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
-void APlayerCharacter::SpawnAI(EAIType AIType)
+void APlayerCharacter::SpawnAI()
 {
 	UAGPGameInstance* AGPGameInstance = Cast<UAGPGameInstance>(GetGameInstance());
 
@@ -65,10 +65,10 @@ void APlayerCharacter::SpawnAI(EAIType AIType)
 	
 	if (HasAuthority())
 	{
-		AISpawnImplementation(ETeam::Team1, AIType);
+		AISpawnImplementation(ETeam::Team1);
 	}else
 	{
-		ServerAISpawn(ETeam::Team2, AIType);
+		ServerAISpawn(ETeam::Team2);
 	}
 }
 
@@ -121,7 +121,7 @@ void APlayerCharacter::FireWeapon(const FInputActionValue& Value)
 	}
 }
 
-void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
+void APlayerCharacter::AISpawnImplementation(ETeam AITeam)
 {
 	// Assuming this is now called on the server
 	if (UAGPGameInstance* GameInstance =
@@ -145,7 +145,6 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 				if (SpawnedAI)
 				{
 					SpawnedAI->AITeam = AITeam;
-					SpawnedAI->SetAIType(AIType);
 					UE_LOG(LogTemp, Log, TEXT("Spawned AI for Team %s at %s"), *SpawnTag.ToString(), *SpawnTransform.ToString());
 				}
 				return; // Exit after spawning at the first valid location
@@ -157,12 +156,12 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 }
 
 
-void APlayerCharacter::ServerAISpawn_Implementation(ETeam AITeam, EAIType AIType)
+void APlayerCharacter::ServerAISpawn_Implementation(ETeam AITeam)
 {
 	if (HasAuthority())
 	{
 		UE_LOG(LogTemp, Log, TEXT("ServerAISpawn called on the server"));
-		AISpawnImplementation(AITeam, AIType);
+		AISpawnImplementation(AITeam);
 	}
 	else
 	{
