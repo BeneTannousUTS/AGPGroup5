@@ -133,13 +133,14 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 		FName SpawnTag = (AITeam == ETeam::Team1) ? FName("Team1") : FName("Team2");
 		TArray<AActor*> PlayerStarts;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
-        
+		
 		for (AActor* PlayerStart : PlayerStarts)
 		{
-			if (PlayerStart->ActorHasTag(SpawnTag))
+			APlayerStart* CastedPlayerStart = Cast<APlayerStart>(PlayerStart);
+			if (CastedPlayerStart->PlayerStartTag.IsEqual(SpawnTag))
 			{
 				// Spawn the AI character at the location of the tagged PlayerStart
-				FTransform SpawnTransform = PlayerStart->GetActorTransform();
+				FTransform SpawnTransform = CastedPlayerStart->GetActorTransform();
 				AAICharacter* SpawnedAI = GetWorld()->SpawnActor<AAICharacter>(GameInstance->GetAIClass(), SpawnTransform, SpawnParams);
 
 				if (SpawnedAI)

@@ -20,5 +20,6 @@ void APickup::OnPickupOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 			GameInstance->UpdateBalance(100);
 		}
 	}
-	
+	Destroy();
 }
+
