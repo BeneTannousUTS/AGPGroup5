@@ -15,6 +15,8 @@ ABaseCharacter::ABaseCharacter()
 	BulletStartPosition = CreateDefaultSubobject<USceneComponent>("Bullet Start");
 	BulletStartPosition->SetupAttachment(GetRootComponent());
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
+
+	
 }
 
 // Called when the game starts or when spawned

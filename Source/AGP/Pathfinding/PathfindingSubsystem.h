@@ -42,7 +42,7 @@ public:
 	TArray<FVector> GetSpawnPositions();
 
 	ANavigationNode* GetNodeFromLocation(const FVector& Location);
-	FVector FindCover(const FVector& TargetLocation, FName TagName);
+	FVector FindInMap(const FVector& TargetLocation, FName TagName);
 
 protected:
 

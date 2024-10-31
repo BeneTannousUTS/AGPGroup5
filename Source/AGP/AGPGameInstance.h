@@ -20,14 +20,13 @@ public:
 
 	UClass* GetWeaponPickupClass() const;
 	UClass* GetMoneyPickupClass() const;
+	UClass* GetAIClass() const;
 	int32 Balance = 0;
 	ETeam PlayerTeam;
 	void UpdateBalance(int32 Change);
 	UPROPERTY()
 	UPlayerCharacterHUD* HUD;
-
-	UPROPERTY(EditDefaultsOnly, Category="Pickup Classes")
-	TSubclassOf<AAICharacter> AIClass;
+	
 
 protected:
 
@@ -35,6 +34,6 @@ protected:
 	TSubclassOf<APickup> WeaponPickupClass;
 	UPROPERTY(EditDefaultsOnly, Category="Pickup Classes")
 	TSubclassOf<APickup> MoneyPickupClass;
-
-	UClass* GetAIClass() const;
+	UPROPERTY(EditDefaultsOnly, Category="AI Classes")
+	TSubclassOf<AAICharacter> AIClass;
 };
