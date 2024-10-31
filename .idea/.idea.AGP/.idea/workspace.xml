@@ -8,51 +8,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0ca479de-55cc-45b9-afed-41413260bf9d" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Content/Meshes/Sniper/source/HdrObj/HdrObj.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Meshes/Sniper/textures/HdrObj_HDR_BaseColor.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Meshes/Sniper/textures/HdrObj_HDR_BaseColor_Mat.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Meshes/Sniper/textures/HdrObj_HDR_Metallic.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Meshes/Sniper/textures/HdrObj_HDR_Normal.uasset" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Content/Meshes/Sniper/textures/HdrObj_HDR_Roughness.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/AnimBP_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/AnimBP_Mannequin.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_AICharacter_New.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_AICharacter_New.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_PlayerCharacterHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_PlayerCharacterHUD.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Levels/ProceduralMap.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ProceduralMap.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Rifle/MM_Rifle_Crouch_Walk_Fwd.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Rifle/MM_Rifle_Crouch_Walk_Fwd.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Rifle/MM_Rifle_Idle_Hipfire.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Rifle/MM_Rifle_Idle_Hipfire.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Rifle/MM_Rifle_Jog_Fwd.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Rifle/MM_Rifle_Jog_Fwd.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Rifle/MM_Rifle_Walk_Fwd.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Rifle/MM_Rifle_Walk_Fwd.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Unarmed/MM_Unarmed_Crouch_Idle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Animations/Locomotion/Unarmed/MM_Unarmed_Crouch_Idle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Materials/M_Manny1.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Materials/M_Manny1.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Materials/M_Manny2.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Materials/M_Manny2.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Meshes/SKM_Manny.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Meshes/SKM_Manny.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Meshes/SK_Mannequin.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Meshes/SK_Mannequin.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Textures/Manny/T_Manny_01_D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Textures/Manny/T_Manny_01_D.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Textures/Manny/T_Manny_01_N.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Textures/Manny/T_Manny_01_N.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Textures/Manny/T_Manny_02_D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Textures/Manny/T_Manny_02_D.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Textures/Manny/T_Manny_02_N.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Mannequin/Textures/Manny/T_Manny_02_N.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Materials/M_WeaponPistol.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Materials/M_WeaponPistol.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Mesh/SK_Pistol.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Mesh/SK_Pistol.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Mesh/SK_Pistol_PhysicsAsset.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Mesh/SK_Pistol_PhysicsAsset.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Mesh/SK_Pistol_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Mesh/SK_Pistol_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Mesh/SM_Pistol.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Mesh/SM_Pistol.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Textures/T_Pistol_AORM.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Textures/T_Pistol_AORM.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Textures/T_Pistol_D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Textures/T_Pistol_D.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Textures/T_Pistol_N.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Pistol/Textures/T_Pistol_N.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Materials/M_WeaponRifle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Materials/M_WeaponRifle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle_PhysicsAsset.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle_PhysicsAsset.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle_Skeleton.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SK_Rifle_Skeleton.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SM_Rifle.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Mesh/SM_Rifle.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_AORM.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_AORM.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_Combined_N.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_Combined_N.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/LyraContent/Weapons/Rifle/Textures/T_Rifle_D.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/PlayerCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/WeaponComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/WeaponComponent.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/WeaponComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/WeaponComponent.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/PickupManagerSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/PickupManagerSubsystem.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -84,7 +42,7 @@
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "AI-types",
+    "git-widget-placeholder": "ai-collecting-money",
     "ignore.virus.scanning.warn.message": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -97,9 +55,9 @@
   },
   "keyToStringList": {
     "rider.external.source.directories": [
-      "C:\\Users\\moose\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\moose\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\moose\\AppData\\Local\\Symbols\\src"
+      "C:\\Users\\zacsl\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\zacsl\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\zacsl\\AppData\\Local\\Symbols\\src"
     ]
   }
 }]]></component>
@@ -204,6 +162,7 @@
       <workItem from="1730176246850" duration="8057000" />
       <workItem from="1730190398010" duration="7366000" />
       <workItem from="1730283919953" duration="3811000" />
+      <workItem from="1730347649331" duration="703000" />
     </task>
     <servers />
   </component>

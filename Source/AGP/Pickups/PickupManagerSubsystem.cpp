@@ -54,7 +54,7 @@ void UPickupManagerSubsystem::SpawnWeaponPickup()
 		if (GameInstance->Balance < 500)
 		{
 			GetWorld()->SpawnActor<APickup>(
-			GameInstance->GetMoneyPickupClass(), SpawnPosition, FRotator::ZeroRotator);
+			GameInstance->GetMoneyPickupClass(), SpawnPosition + FVector(0,0,35.0f), FRotator::ZeroRotator);
 			//GameInstance->UpdateBalance(100);
 			//UE_LOG(LogTemp, Display, TEXT("Money Pickup Spawned"));
 		}

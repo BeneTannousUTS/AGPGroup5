@@ -451,3 +451,4 @@ void AAICharacter::Tick(float DeltaTime)
  	UpdateState();
  	UpdateMoveState();
  }
+ 
