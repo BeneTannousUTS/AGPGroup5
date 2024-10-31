@@ -1,10 +1,9 @@
  // Fill out your copyright notice in the Description page of Project Settings.
 #include "AGPGameInstance.h"
-<<<<<<< HEAD
 
 #include "Characters/AICharacter.h"
-=======
->>>>>>> ui
+#include "GameFramework/PlayerStart.h"
+#include "Kismet/GameplayStatics.h"
 #include "Pickups/Pickup.h"
 
  UClass* UAGPGameInstance::GetWeaponPickupClass() const
@@ -20,14 +19,10 @@
  void UAGPGameInstance::UpdateBalance(int32 Change)
  {
   Balance += Change;
+  HUD->SetBalance(Balance);
  }
 
-<<<<<<< HEAD
  UClass* UAGPGameInstance::GetAIClass() const
  {
   return AIClass.Get();
  }
-
-=======
->>>>>>> ui
-

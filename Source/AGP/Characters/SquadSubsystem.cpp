@@ -67,7 +67,7 @@ void USquadSubsystem::AdjustBehaviorBasedOnSquadSize(AAICharacter* AICharacter)
 	int32 SquadSize = AICharacter->SquadMembers.Num();
 	if (SquadSize == 0)
 	{
-		if(!AICharacter->SensedCharacter) //If no sensed character, search
+		if(!AICharacter->SensedCharacter.IsValid()) //If no sensed character, search
 		{
 			AICharacter->CurrentState = EAIState::Patrol;
 		}else if(AICharacter->SensedCharacter->SquadMembers.Num() > 0) //If enemy has squad, evade
@@ -77,7 +77,7 @@ void USquadSubsystem::AdjustBehaviorBasedOnSquadSize(AAICharacter* AICharacter)
 	}
 	else if (SquadSize >= 1)
 	{
-		if (AICharacter->SquadLeader == AICharacter && IsValid(AICharacter->SensedCharacter))
+		if (AICharacter->SquadLeader == AICharacter && AICharacter->SensedCharacter.IsValid())
 		{
 			AICharacter->CurrentState = EAIState::Engage;
 		}
@@ -122,7 +122,7 @@ void USquadSubsystem::SuggestTargetToLeader(AAICharacter* AICharacter, AAICharac
 		CommunicateTargetToSquad(AICharacter, PotentialTarget);
 	}
 	// If the squad leader doesn't have a sensed character, set it to the potential target
-	else if (!AICharacter->SquadLeader->SensedCharacter)
+	else if (!AICharacter->SquadLeader->SensedCharacter.IsValid())
 	{
 		AICharacter->SquadLeader->SensedCharacter = PotentialTarget;
 	}

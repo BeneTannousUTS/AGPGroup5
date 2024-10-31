@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AICharacter.h"
 #include "GameFramework/Character.h"
 #include "BaseCharacter.h"
 #include "InputActionValue.h"
@@ -54,10 +55,17 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 >>>>>>> ui
 	
+	UFUNCTION(BlueprintCallable)
+	void SpawnAI(EAIType AIType);
+	
 private:
 	
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void FireWeapon(const FInputActionValue& Value);
+
+	void AISpawnImplementation(ETeam AITeam, EAIType AIType);
+	UFUNCTION(Server, Reliable)
+	void ServerAISpawn(ETeam AITeam, EAIType AIType);
 
 };

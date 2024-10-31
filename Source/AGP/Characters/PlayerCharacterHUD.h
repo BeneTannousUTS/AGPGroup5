@@ -15,7 +15,7 @@ class AGP_API UPlayerCharacterHUD : public UUserWidget
 	GENERATED_BODY()
 public:
 	void SetBalance(int32 Balance) const;
-	
+
 protected:
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	class UTextBlock* BalanceText;

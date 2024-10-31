@@ -3,20 +3,11 @@
 
 #include "ProceduralLandscape.h"
 #include "KismetProceduralMeshLibrary.h"
-<<<<<<< HEAD
-=======
-#include "MultiplayerGameMode.h"
-#include "Characters/PlayerCharacter.h"
-#include "GameFramework/PlayerStart.h"
->>>>>>> ui
 #include "Kismet/KismetSystemLibrary.h"
 #include "Pathfinding/NavigationNode.h"
 #include "Pathfinding/PathfindingSubsystem.h"
 #include "Kismet/GameplayStatics.h"
-<<<<<<< HEAD
-=======
 #include "Net/UnrealNetwork.h"
->>>>>>> ui
 
 // Sets default values
 AProceduralLandscape::AProceduralLandscape()
@@ -24,10 +15,8 @@ AProceduralLandscape::AProceduralLandscape()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
-<<<<<<< HEAD
-=======
-	SetReplicates(true);
->>>>>>> ui
+	bReplicates = true;
+	bNetLoadOnClient = true;
 
 	ProceduralMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("Procedural Mesh"));
 	SetRootComponent(ProceduralMesh);
@@ -38,11 +27,8 @@ void AProceduralLandscape::BeginPlay()
 {
 	Super::BeginPlay();
 	PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>();
-<<<<<<< HEAD
+	
 	//GenerateTerrain();
-=======
-	GenerateTerrain();
->>>>>>> ui
 }
 
 void AProceduralLandscape::ClearLandscape()
@@ -65,11 +51,7 @@ void AProceduralLandscape::ClearLandscape()
 	}
 	
 	TArray<AActor*> SafeHouses;
-<<<<<<< HEAD
 	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("SafeHouseCube"), SafeHouses);
-=======
-	UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("SafeHouse"), SafeHouses);
->>>>>>> ui
 	for (AActor* FoundActor : SafeHouses)
 	{
 		FoundActor->Destroy();
@@ -101,14 +83,19 @@ void AProceduralLandscape::ClearLandscape()
 	UKismetSystemLibrary::FlushPersistentDebugLines(GetWorld());
 }
 
-<<<<<<< HEAD
-=======
-void AProceduralLandscape::OnRep_TerrainGenerated()
+void AProceduralLandscape::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AProceduralLandscape, Vertices);
+	DOREPLIFETIME(AProceduralLandscape, Triangles);
+	DOREPLIFETIME(AProceduralLandscape, UVCoords);
+}
+
+void AProceduralLandscape::OnTerrainGenerated_Implementation()
 {
 	GenerateMesh();
 }
 
->>>>>>> ui
 void AProceduralLandscape::RemoveNavNodes()
 {
 	// removing all obstacle nodes :)
@@ -192,90 +179,6 @@ void AProceduralLandscape::SpawnClimbingRock(FVector SpawnLocation) const
 	}
 }
 
-<<<<<<< HEAD
-=======
-void AProceduralLandscape::SetPlayerSpawns()
-{
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), AvailablePlayerStarts);
-
-	if (AvailablePlayerStarts.Num() == 2)
-	{
-		// Move the two PlayerStarts to new positions
-		MovePlayerStarts(
-			FVector(VertexSpacing * Width / 2.0f, -500.0f, 8000.0f), FVector(VertexSpacing * Width / 2.0f, VertexSpacing * (Depth - 1) + 500.0f, 8000.0f), 
-			FRotator(0.0f, 0, 0.0f), FRotator(0.0f, 0.0f, 0.0f)
-		);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Not 2 Player Starts"));
-	}
-}
-
-void AProceduralLandscape::MovePlayerStarts(const FVector& Position1, const FVector& Position2, const FRotator& Rotation1, const FRotator& Rotation2)
-{
-	if (AvailablePlayerStarts.Num() < 2)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Insufficient PlayerStart actors to move!"));
-		return;
-	}
-
-	// Move the first PlayerStart
-	APlayerStart* PlayerStart1 = Cast<APlayerStart>(AvailablePlayerStarts[0]);
-	if (PlayerStart1)
-	{
-		if (PlayerStart1->GetRootComponent())
-		{
-			PlayerStart1->GetRootComponent()->SetMobility(EComponentMobility::Movable);
-		}
-		
-		PlayerStart1->SetActorLocationAndRotation(Position1, Rotation1);
-		UE_LOG(LogTemp, Log, TEXT("Moved PlayerStart 1 to (%s)"), *Position1.ToString());
-	}
-
-	// Move the second PlayerStart
-	APlayerStart* PlayerStart2 = Cast<APlayerStart>(AvailablePlayerStarts[1]);
-	if (PlayerStart2)
-	{
-		if (PlayerStart2->GetRootComponent())
-		{
-			PlayerStart2->GetRootComponent()->SetMobility(EComponentMobility::Movable);
-		}
-		
-		PlayerStart2->SetActorLocationAndRotation(Position2, Rotation2);
-		UE_LOG(LogTemp, Log, TEXT("Moved PlayerStart 2 to (%s)"), *Position2.ToString());
-	}
-}
-
-void AProceduralLandscape::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AProceduralLandscape, Vertices);
-	DOREPLIFETIME(AProceduralLandscape, Triangles);
-	DOREPLIFETIME(AProceduralLandscape, UVCoords);
-}
-
-void AProceduralLandscape::Multicast_OnTerrainGenerated_Implementation()
-{
-	GenerateMesh();
-
-	/*APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-	if (PlayerController && !HasAuthority())  // Ensure it's not the server
-	{
-		if (AMultiplayerGameMode* GameMode = Cast<AMultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
-		{
-			GameMode->RespawnPlayer(PlayerController, 1);
-			UE_LOG(LogTemp, Log, TEXT("Client respawned at index: %d"), 1);
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Log, TEXT("CALLED ON SERVER"));
-	}*/
-}
-
->>>>>>> ui
 bool AProceduralLandscape::ShouldTickIfViewportsOnly() const
 {
 	return true;
@@ -801,7 +704,6 @@ void AProceduralLandscape::GenerateTunnels()
 	//Triangles.Append({FirstTunnelVertex, FirstTunnelVertex + 1, FirstHoleUpIndex + 1});
 }
 
-<<<<<<< HEAD
 /*void AProceduralLandscape::GenerateTunnels()
 {
     float TunnelRadius = VertexSpacing * 0.6f;
@@ -903,8 +805,6 @@ void AProceduralLandscape::GenerateTunnels()
 }
 */
 
-=======
->>>>>>> ui
 void AProceduralLandscape::GenerateCliffs()
 {
 	// RIGHT CLIFF BOTTOM FACE
@@ -1346,6 +1246,7 @@ void AProceduralLandscape::GenerateCliffs()
 
 void AProceduralLandscape::GenerateMesh() const
 {
+	UE_LOG(LogTemp, Log, TEXT("Gen erate Mesh || NetMode: %d"), static_cast<int32>(GetNetMode()));
 	if (ProceduralMesh)
 	{
 		TArray<FVector> Normals;
@@ -1360,7 +1261,6 @@ void AProceduralLandscape::GenerateSafeHouse(FVector SpawnLocation) const
 {
 	if (UWorld* World = GetWorld())
 	{
-<<<<<<< HEAD
 		if (AActor* CubeActor = World->SpawnActor<AActor>(AActor::StaticClass()))
 		{
 			CubeActor->Tags.Add(FName("SafeHouseCube"));
@@ -1388,89 +1288,25 @@ void AProceduralLandscape::GenerateSafeHouse(FVector SpawnLocation) const
 				CubeMesh->SetMaterial(0, CubeMaterial);
 			}
 		}
-=======
-		// Check if the SafeHouseBlueprintClass is set
-		if (SafeHouseBlueprintClass)
-		{
-			TArray<AActor*> ExistingSafeHouses;
-			UGameplayStatics::GetAllActorsWithTag(World, FName("SafeHouse"), ExistingSafeHouses);
-			
-			//FRotator SpawnRotation = (!ExistingSafeHouses.IsEmpty()) ? FRotator(0, 180, 0) : FRotator::ZeroRotator;
-			
-			if (AActor* SafeHouseActor = World->SpawnActor<AActor>(SafeHouseBlueprintClass, SpawnLocation, FRotator(0,0,0)))
-			{
-				SafeHouseActor->Tags.Add(FName("SafeHouse"));
-				
-				int32 Size = 15;
-				FVector AdjustedLocation = SpawnLocation + FVector(0, 0, Size * 100.0f / 2);
-				SafeHouseActor->SetActorLocation(AdjustedLocation);
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("SafeHouseBlueprintClass is not set. Cannot spawn SafeHouse."));
-		}
-	}
-}
-
-void AProceduralLandscape::RespawnServerPlayer()
-{
-	if (!HasAuthority()) return;  // Ensure only the server executes this
-
-	// Get the server's player controller (usually the first controller)
-	APlayerController* ServerController = GetWorld()->GetFirstPlayerController();
-	if (!ServerController) 
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No server player controller found!"));
-		return;
-	}
-
-	// Get the GameMode and call the respawn logic
-	if (AMultiplayerGameMode* GameMode = Cast<AMultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
-	{
-		GameMode->RespawnPlayer(ServerController, 0);
-		UE_LOG(LogTemp, Log, TEXT("Server player respawned!"));
->>>>>>> ui
 	}
 }
 
 void AProceduralLandscape::GenerateTerrain()
 {
-<<<<<<< HEAD
-	Width = FMath::RandRange(MinWidth, MaxWidth);
-	Depth = FMath::RandRange(MinDepth, MaxDepth);
-	Height = FMath::RandRange(MinHeight, MaxHeight);
-	
-=======
-	if (!HasAuthority()) return;
-	
-	Width = FMath::RandRange(MinWidth, MaxWidth);
-	Depth = FMath::RandRange(MinDepth, MaxDepth);
-	Height = FMath::RandRange(MinHeight, MaxHeight);
-
-	SetPlayerSpawns();
->>>>>>> ui
 	ClearLandscape();
+	Width = FMath::RandRange(MinWidth, MaxWidth);
+	Depth = FMath::RandRange(MinDepth, MaxDepth);
+	Height = FMath::RandRange(MinHeight, MaxHeight);
+		
 	GenerateBase();
 	GenerateTunnels();
 	GenerateCliffs();
+	
+	
 	GenerateMesh();
 	GenerateSafeHouse(FVector((Width - 1) * VertexSpacing / 2, (Depth - 5) * VertexSpacing + VertexSpacing / 2.0f, 0));
 	GenerateSafeHouse(FVector((Width - 1) * VertexSpacing / 2, 3 * VertexSpacing + VertexSpacing / 2.0f, 0));
-<<<<<<< HEAD
 
 	RemoveNavNodes();
 	PathfindingSubsystem->UpdatesNodes(Nodes);
-=======
-	RemoveNavNodes();
-	PathfindingSubsystem->UpdatesNodes(Nodes);
-
-	if (AMultiplayerGameMode* GameMode = Cast<AMultiplayerGameMode>(UGameplayStatics::GetGameMode(GetWorld())))
-	{
-		GameMode->PlayerStartLocations = AvailablePlayerStarts;
-		RespawnServerPlayer();
-	}
-
-	Multicast_OnTerrainGenerated();
->>>>>>> ui
 }

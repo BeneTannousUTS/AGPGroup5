@@ -5,10 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "ProceduralMeshComponent.h"
-<<<<<<< HEAD
-=======
-#include "GameFramework/PlayerStart.h"
->>>>>>> ui
 #include "Pathfinding/NavigationNode.h"
 #include "ProceduralLandscape.generated.h"
 
@@ -28,10 +24,6 @@ public:
 	void GenerateSafeHouse(FVector SpawnLocation) const;
 
 protected:
-<<<<<<< HEAD
-=======
-	void RespawnServerPlayer();
->>>>>>> ui
 	void GenerateTerrain();
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -39,35 +31,20 @@ protected:
 	UProceduralMeshComponent* ProceduralMesh;
 
 	void ClearLandscape();
-<<<<<<< HEAD
-    UPROPERTY()
+    UPROPERTY(Replicated)
     TArray<FVector> Vertices;
-    UPROPERTY()
+    UPROPERTY(Replicated)
     TArray<int32> Triangles;
-    UPROPERTY()
-=======
-    UPROPERTY(ReplicatedUsing = OnRep_TerrainGenerated)
-    TArray<FVector> Vertices;
-    UPROPERTY(ReplicatedUsing = OnRep_TerrainGenerated)
-    TArray<int32> Triangles;
-    UPROPERTY(ReplicatedUsing = OnRep_TerrainGenerated)
->>>>>>> ui
+    UPROPERTY(Replicated)
     TArray<FVector2D> UVCoords;
 	UPROPERTY()
 	TArray<ANavigationNode*> Nodes;
 	UPROPERTY()
 	UPathfindingSubsystem* PathfindingSubsystem;
-
-<<<<<<< HEAD
-=======
-	UFUNCTION()
-	void OnRep_TerrainGenerated();
-	void TellClientsToRespawn();
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_OnTerrainGenerated();
+	void OnTerrainGenerated();
 
->>>>>>> ui
 	UPROPERTY(EditAnywhere)
 	bool bShouldRegenerate = false;
 	float Timer;
@@ -89,20 +66,11 @@ protected:
 	int32 MaxHeight = 3;
 	UPROPERTY(EditAnywhere)
 	float VertexSpacing = 1000.0f;
-<<<<<<< HEAD
-=======
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> SafeHouseBlueprintClass;
->>>>>>> ui
 
 	int32 Width;
 	int32 Depth;
 	int32 Height;
-<<<<<<< HEAD
 
-=======
-	
->>>>>>> ui
 	/*UPROPERTY(EditAnywhere)
 	float PerlinScale = 1000.0f;
 	UPROPERTY(EditAnywhere)
@@ -119,12 +87,5 @@ public:
 
 private:
 	void SpawnClimbingRock(FVector SpawnLocation) const;
-<<<<<<< HEAD
 
-=======
-	void SetPlayerSpawns();
-	void MovePlayerStarts(const FVector& Position1, const FVector& Position2, const FRotator& Rotation1,
-	                      const FRotator& Rotation2);
-	TArray<AActor*> AvailablePlayerStarts;
->>>>>>> ui
 };
