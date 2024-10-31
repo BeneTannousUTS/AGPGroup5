@@ -38,7 +38,7 @@ void UPathfindingSubsystem::PopulateNodes()
 	for (TActorIterator<ANavigationNode> It(GetWorld()); It; ++It)
 	{
 		Nodes.Add(*It);
-		UE_LOG(LogTemp, Warning, TEXT("NODE: %s"), *(*It)->GetActorLocation().ToString())
+		//UE_LOG(LogTemp, Warning, TEXT("NODE: %s"), *(*It)->GetActorLocation().ToString())
 	}
 }
 
@@ -65,11 +65,11 @@ ANavigationNode* UPathfindingSubsystem::GetNodeFromLocation(const FVector& Locat
 	// Return the closest node if found, otherwise return nullptr.
 	if (ClosestNode)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Returning found node"));
+		//UE_LOG(LogTemp, Warning, TEXT("Returning found node"));
 		return ClosestNode;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("No node found near the specified location."));
+	//UE_LOG(LogTemp, Warning, TEXT("No node found near the specified location."));
 	return nullptr;
 }
 
@@ -80,7 +80,7 @@ ANavigationNode* UPathfindingSubsystem::GetRandomNode()
 	// Failure condition
 	if (Nodes.Num() == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("The nodes array is empty."))
+		//UE_LOG(LogTemp, Error, TEXT("The nodes array is empty."))
 		return nullptr;
 	}
 	const int32 RandIndex = FMath::RandRange(0, Nodes.Num()-1);
@@ -92,7 +92,7 @@ ANavigationNode* UPathfindingSubsystem::FindNearestNode(const FVector& TargetLoc
 	// Failure condition.
 	if (Nodes.Num() == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("The nodes array is empty."))
+		//UE_LOG(LogTemp, Error, TEXT("The nodes array is empty."))
 		return nullptr;
 	}
 
@@ -149,7 +149,7 @@ ANavigationNode* UPathfindingSubsystem::FindFurthestNode(const FVector& TargetLo
 	// Failure condition.
 	if (Nodes.Num() == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("The nodes array is empty."))
+		//UE_LOG(LogTemp, Error, TEXT("The nodes array is empty."))
 		return nullptr;
 	}
 
@@ -174,7 +174,7 @@ TArray<FVector> UPathfindingSubsystem::GetPath(ANavigationNode* StartNode, ANavi
 {
 	if (!StartNode || !EndNode)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Either the start or end node are nullptrs."))
+		//UE_LOG(LogTemp, Error, TEXT("Either the start or end node are nullptrs."))
 		return TArray<FVector>();
 	}
 
@@ -213,7 +213,7 @@ TArray<FVector> UPathfindingSubsystem::GetPath(ANavigationNode* StartNode, ANavi
 		if (CurrentNode == EndNode)
 		{
 			// Then we have found the path so reconstruct it and get the positions of each of the nodes in the path.
-			UE_LOG(LogTemp, Display, TEXT("PATH FOUND"))
+			//UE_LOG(LogTemp, Display, TEXT("PATH FOUND"))
 			return ReconstructPath(CameFrom, EndNode);
 		}
 

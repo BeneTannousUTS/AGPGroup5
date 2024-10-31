@@ -14,11 +14,8 @@ class UAGPGameInstance;
 APlayerCharacter::APlayerCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-<<<<<<< HEAD
-=======
 	bReplicates = true;
 	SetReplicates(true);
->>>>>>> ui
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -58,7 +55,7 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
-void APlayerCharacter::SpawnAI(EAIType AIType)
+void APlayerCharacter::SpawnAI()
 {
 	UAGPGameInstance* AGPGameInstance = Cast<UAGPGameInstance>(GetGameInstance());
 
@@ -70,10 +67,10 @@ void APlayerCharacter::SpawnAI(EAIType AIType)
 	
 	if (HasAuthority())
 	{
-		AISpawnImplementation(ETeam::Team1, AIType);
+		AISpawnImplementation(ETeam::Team1);
 	}else
 	{
-		ServerAISpawn(ETeam::Team2, AIType);
+		ServerAISpawn(ETeam::Team2);
 	}
 }
 
@@ -91,15 +88,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 	if (UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
-<<<<<<< HEAD
-		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-		Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
-		Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-		Input->BindAction(FireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::FireWeapon);
-	}
-}
-
-=======
 		//Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		//Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 		//Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
@@ -112,7 +100,6 @@ void APlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 }
 
->>>>>>> ui
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	const FVector2D MovementVector = Value.Get<FVector2D>();
@@ -141,7 +128,7 @@ void APlayerCharacter::FireWeapon(const FInputActionValue& Value)
 	}
 }
 
-void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
+void APlayerCharacter::AISpawnImplementation(ETeam AITeam)
 {
 	// Assuming this is now called on the server
 	if (UAGPGameInstance* GameInstance =
@@ -165,7 +152,6 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 				if (SpawnedAI)
 				{
 					SpawnedAI->AITeam = AITeam;
-					SpawnedAI->SetAIType(AIType);
 					UE_LOG(LogTemp, Log, TEXT("Spawned AI for Team %s at %s"), *SpawnTag.ToString(), *SpawnTransform.ToString());
 				}
 				return; // Exit after spawning at the first valid location
@@ -177,12 +163,12 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 }
 
 
-void APlayerCharacter::ServerAISpawn_Implementation(ETeam AITeam, EAIType AIType)
+void APlayerCharacter::ServerAISpawn_Implementation(ETeam AITeam)
 {
 	if (HasAuthority())
 	{
 		UE_LOG(LogTemp, Log, TEXT("ServerAISpawn called on the server"));
-		AISpawnImplementation(AITeam, AIType);
+		AISpawnImplementation(AITeam);
 	}
 	else
 	{

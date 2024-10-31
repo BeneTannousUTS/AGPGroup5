@@ -5,7 +5,6 @@
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SquadSubsystem.h"
-#include "AGP/Pickups/Pickup.h"
 #include "Net/UnrealNetwork.h"
 #include "Perception/PawnSensingComponent.h"
 
