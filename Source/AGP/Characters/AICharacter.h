@@ -91,16 +91,13 @@ protected:
 	void TickCover();
 
 	//Logic for any exceptions to AI logic, i.e. looking for money, healing squad members, etc
-	void CheckSpecialActions(float DeltaTime);
-	void ScoutTick();
-	void MedicTick(float DeltaTime);
-	void SniperTick();
+	void CheckSpecialActions();
 	
 	// AI state management
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 	EAIState CurrentState = EAIState::Patrol;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Replicated)
 	EMoveState MovementState = EMoveState::RUNNING;
 
 	UPROPERTY()
@@ -115,11 +112,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TArray<FVector> CurrentPath;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TWeakObjectPtr<AAICharacter> SquadLeader;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TWeakObjectPtr<AAICharacter> SquadMemberToHeal;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
+	AAICharacter* SquadLeader;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsLeader();
@@ -136,7 +130,7 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	TWeakObjectPtr<APickup> SensedMoney = nullptr;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing=SetAIType)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated)
 	EAIType AIType = EAIType::Soldier;
 
 	UPROPERTY(VisibleAnywhere)
@@ -150,6 +144,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	EMoveState NextMoveState;
+
+	UFUNCTION(Server, Reliable)
+	void ServerUpdateMoveState(EAIState NewState);
 
 	// Movement and pathfinding
 	void MoveAlongPath();
@@ -176,6 +173,12 @@ protected:
 	void SetWeaponStats(EWeaponType Weapon);
 
 	void CalculateNextMoveState();
+	
+	UFUNCTION()
+	void OnRep_MoveState();
+
+	UFUNCTION()
+	void SetAIType(EAIType AITypeToSet);
 
 public:
 	void UpdateMoveState();
@@ -186,15 +189,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	EWeaponType GetWeaponType();
 
-	//TODO: REPLICATE THIS
-	UFUNCTION()
-	void SetAIType(EAIType AITypeToSet);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastSetupAI(ETeam InAITeam, EAIType InAIType);
 
 private:
 	void UpdateState();
-	bool bCanBreakFromSquad = false;
 	bool bNextMoveCanBeSet = true;
 	bool bIgnoreStandardTick = false;
-	bool bIsBeingHealed = false;
-	float TimeSinceLastHeal = 0;
 };
