@@ -8,18 +8,19 @@
 #include "AGP/Characters/AICharacter.h"
 
 void APickup::OnPickupOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                              UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitInfo)
+							  UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitInfo)
 {
-	//Super::OnPickupOverlap(OverlappedComponent, OtherActor, OtherComponent, OtherBodyIndex, bFromSweep, HitInfo);
-	
-	if (AAICharacter* AIChar = Cast<AAICharacter>(OtherActor))
+	if (HasAuthority())
 	{
-		UE_LOG(LogTemp, Display, TEXT("Overlap event occurred on Pickup from Actor: %s"), *OtherActor->GetName());
-		if (UAGPGameInstance* GameInstance = Cast<UAGPGameInstance>(GetGameInstance()); AIChar->GetTeam() == GameInstance->PlayerTeam)
+		if (AAICharacter* AIChar = Cast<AAICharacter>(OtherActor))
 		{
-			GameInstance->UpdateBalance(100);
+			UE_LOG(LogTemp, Display, TEXT("Overlap event occurred on Pickup from Actor: %s"), *OtherActor->GetName());
+			if (UAGPGameInstance* GameInstance = Cast<UAGPGameInstance>(GetGameInstance()); 
+				GameInstance && AIChar->GetTeam() == GameInstance->PlayerTeam)
+			{
+				GameInstance->UpdateBalance(100);
+			}
 		}
+		Destroy(); // Destroy server-side to ensure cleanup across clients.
 	}
-	Destroy();
 }
-

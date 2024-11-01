@@ -16,11 +16,15 @@
  return  MoneyPickupClass.Get();
  }
 
- void UAGPGameInstance::UpdateBalance(int32 Change)
+void UAGPGameInstance::UpdateBalance(int32 Change)
  {
   Balance += Change;
-  HUD->SetBalance(Balance);
+  if (HUD) // Check to ensure the HUD exists before updating
+  {
+   HUD->SetBalance(Balance);
+  }
  }
+
 
  UClass* UAGPGameInstance::GetAIClass() const
  {

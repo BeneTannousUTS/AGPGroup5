@@ -42,16 +42,6 @@ void AAICharacter::BeginPlay()
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AAICharacter::OnSensedPawn);
 	}
-
-	if (WeaponComponent)
-	{
-		MulticastSetupAI(AITeam, AIType);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("WeaponComponent is null on MulticastSetupAI call."));
-	}
-
 }
 
 void AAICharacter::TickFollowLeader()
@@ -358,11 +348,14 @@ void AAICharacter::OnRep_MoveState()
 
 void AAICharacter::MulticastSetupAI_Implementation(ETeam InAITeam, EAIType InAIType)
 {
-	AITeam = InAITeam;
-	SetAIType(InAIType); // Custom function to set AI type
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		AITeam = InAITeam;
+		SetAIType(InAIType); // Custom function to set AI type
 
-	// Log for debugging purposes
-	UE_LOG(LogTemp, Log, TEXT("Multicast_SetupAI called: Team = %d, Type = %d"), (int)AITeam, (int)InAIType);
+		// Log for debugging purposes
+		UE_LOG(LogTemp, Log, TEXT("Multicast_SetupAI called: Team = %d, Type = %d"), (int)AITeam, (int)InAIType);
+	}
 }
 
 void AAICharacter::UpdateMoveState()
