@@ -9,12 +9,12 @@
   <component name="ChangeListManager">
     <list default="true" id="0ca479de-55cc-45b9-afed-41413260bf9d" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_AICharacter_New.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_AICharacter_New.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_Money.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_Money.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_PlayerCharacterHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_PlayerCharacterHUD.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/PlayerCharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/PickupManagerSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/PickupManagerSubsystem.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -168,6 +168,8 @@
       <workItem from="1730283919953" duration="3811000" />
       <workItem from="1730347649331" duration="703000" />
       <workItem from="1730349591680" duration="1330000" />
+      <workItem from="1730440078282" duration="6686000" />
+      <workItem from="1730457525775" duration="2657000" />
     </task>
     <servers />
   </component>
