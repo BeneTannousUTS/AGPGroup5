@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AICharacter.h"
+
+#include "BehaviourComponent.h"
 #include "HealthComponent.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -36,6 +38,7 @@ void AAICharacter::BeginPlay()
 	Super::BeginPlay();
 	PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>();
 	SquadSubsystem = GetWorld()->GetSubsystem<USquadSubsystem>();
+	BehaviourComponent = CreateDefaultSubobject<UBehaviourComponent>(TEXT("BehaviourComponent"));
 	CurrentPath = PathfindingSubsystem->GetRandomPath(GetActorLocation());
 
 	if (PawnSensingComponent)
@@ -404,6 +407,26 @@ void AAICharacter::UpdateMoveState()
 	}
 }
 
+TArray<FVector>* AAICharacter::GetCurrentPath()
+{
+	return &CurrentPath;
+}
+
+AAICharacter* AAICharacter::GetSquadLeader()
+{
+	return SquadLeader;
+}
+
+TArray<AAICharacter*> AAICharacter::GetSquadMembers()
+{
+	return SquadMembers;
+}
+
+TWeakObjectPtr<AAICharacter> AAICharacter::GetSensedCharacter()
+{
+	return SensedCharacter;
+}
+
 void AAICharacter::UpdateState()
 {
 	SenseEnemy();
@@ -424,7 +447,7 @@ void AAICharacter::UpdateState()
 		{
 			CurrentState = EAIState::Engage;
 		}
-		TickFollowLeader();
+		BehaviourComponent->TickFollowLeader();
 		break;
 
 	case EAIState::Engage:

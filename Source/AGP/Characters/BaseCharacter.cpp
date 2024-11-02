@@ -49,6 +49,11 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ABaseCharacter, WeaponComponent);
 }
 
+UWeaponComponent* ABaseCharacter::GetWeaponComponent()
+{
+	return WeaponComponent;
+}
+
 // Called every frame
 void ABaseCharacter::Tick(float DeltaTime)
 {

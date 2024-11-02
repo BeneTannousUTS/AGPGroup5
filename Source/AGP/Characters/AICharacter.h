@@ -8,6 +8,7 @@
 #include "AGP/Pickups/Pickup.h"
 #include "AICharacter.generated.h"
 
+class UBehaviourComponent;
 class UPawnSensingComponent;
 class UPathfindingSubsystem;
 class USquadSubsystem;
@@ -77,6 +78,7 @@ public:
 	
 protected:
 	friend class USquadSubsystem;
+	friend class UBehaviourComponent;
 
 	UFUNCTION()
 	void OnSensedPawn(APawn* Pawn);
@@ -105,6 +107,9 @@ protected:
 
 	UPROPERTY()
 	USquadSubsystem* SquadSubsystem;
+
+	UPROPERTY()
+	UBehaviourComponent* BehaviourComponent;
 	
 	UPROPERTY(VisibleAnywhere)
 	UPawnSensingComponent* PawnSensingComponent;
@@ -192,6 +197,11 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSetupAI(ETeam InAITeam, EAIType InAIType);
 
+	TArray<FVector>* GetCurrentPath();
+	AAICharacter* GetSquadLeader();
+	TArray<AAICharacter*> GetSquadMembers();
+	TWeakObjectPtr<AAICharacter> GetSensedCharacter();
+	
 private:
 	void UpdateState();
 	bool bNextMoveCanBeSet = true;

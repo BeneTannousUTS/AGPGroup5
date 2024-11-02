@@ -34,7 +34,16 @@ public:
 	void Reload();
 
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+
+	UWeaponComponent* GetWeaponComponent();
+
+	/**
+	 * Will fire at a specific location and handles the impact of the shot such as determining what it hit and
+	 * deducting health if it hit a particular type of actor.
+	 * @param FireAtLocation The location that you want to fire at.
+	 * @return true if a shot was taken and false otherwise.
+	 */
+	void Fire(const FVector& FireAtLocation);
 
 protected:
 	// Called when the game starts or when spawned
@@ -60,14 +69,6 @@ protected:
 	 */
 	UPROPERTY(Replicated)
 	UWeaponComponent* WeaponComponent = nullptr;
-
-	/**
-	 * Will fire at a specific location and handles the impact of the shot such as determining what it hit and
-	 * deducting health if it hit a particular type of actor.
-	 * @param FireAtLocation The location that you want to fire at.
-	 * @return true if a shot was taken and false otherwise.
-	 */
-	void Fire(const FVector& FireAtLocation);
 
 	bool bIsCrouching = false;
 	bool bHasWeapon= true;
