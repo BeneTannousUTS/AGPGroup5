@@ -196,11 +196,6 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSetupAI(ETeam InAITeam, EAIType InAIType);
-
-	TArray<FVector>* GetCurrentPath();
-	AAICharacter* GetSquadLeader();
-	TArray<AAICharacter*> GetSquadMembers();
-	TWeakObjectPtr<AAICharacter> GetSensedCharacter();
 	
 private:
 	void UpdateState();

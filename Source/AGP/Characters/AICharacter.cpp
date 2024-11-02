@@ -407,26 +407,6 @@ void AAICharacter::UpdateMoveState()
 	}
 }
 
-TArray<FVector>* AAICharacter::GetCurrentPath()
-{
-	return &CurrentPath;
-}
-
-AAICharacter* AAICharacter::GetSquadLeader()
-{
-	return SquadLeader;
-}
-
-TArray<AAICharacter*> AAICharacter::GetSquadMembers()
-{
-	return SquadMembers;
-}
-
-TWeakObjectPtr<AAICharacter> AAICharacter::GetSensedCharacter()
-{
-	return SensedCharacter;
-}
-
 void AAICharacter::UpdateState()
 {
 	SenseEnemy();

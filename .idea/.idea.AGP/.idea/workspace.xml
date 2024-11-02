@@ -12,8 +12,7 @@
       <change beforePath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/BaseCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/BaseCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/BaseCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/BaseCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/BehaviourComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/BehaviourComponent.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,6 +170,7 @@
       <workItem from="1730452153188" duration="2614000" />
       <workItem from="1730510675619" duration="2586000" />
       <workItem from="1730521417217" duration="633000" />
+      <workItem from="1730522953514" duration="579000" />
     </task>
     <servers />
   </component>
