@@ -8,22 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="664d7dbc-4ba2-4e1a-8a45-0f339bb9ec43" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_AGPGameInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_AGPGameInstance.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_AGPGameModeBase.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_AGPGameModeBase.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_AGPPlayerCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_AGPPlayerCharacter.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_Money.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_Money.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/AGPGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/AGPGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/AGPGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/AGPGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/AGPGameModeBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/AGPGameModeBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/PlayerCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/PlayerCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/PlayerCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/PlayerCharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/Pickup.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/AGP/Pickups/PickupManagerSubsystem.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Pickups/PickupManagerSubsystem.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +124,7 @@
       <option name="presentableId" value="Default" />
       <updated>1730510277672</updated>
       <workItem from="1730510280636" duration="1133000" />
-      <workItem from="1730511434945" duration="4850000" />
+      <workItem from="1730511434945" duration="5155000" />
     </task>
     <servers />
   </component>
