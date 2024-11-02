@@ -10,7 +10,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Perception/PawnSensingComponent.h"
 
-AAICharacter::AAICharacter(): PathfindingSubsystem(nullptr), SquadSubsystem(nullptr), SquadLeader(nullptr), BehaviourComponent(nullptr)
+AAICharacter::AAICharacter(): PathfindingSubsystem(nullptr), SquadSubsystem(nullptr), BehaviourComponent(nullptr), SquadLeader(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
@@ -36,181 +36,20 @@ ETeam AAICharacter::GetTeam()
 void AAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>();
-	SquadSubsystem = GetWorld()->GetSubsystem<USquadSubsystem>();
-	CurrentPath = PathfindingSubsystem->GetRandomPath(GetActorLocation());
+	if(!BehaviourComponent)
+	{
+		BehaviourComponent->InitializeComponent();
+	}
 
 	if (PawnSensingComponent)
 	{
 		PawnSensingComponent->OnSeePawn.AddDynamic(this, &AAICharacter::OnSensedPawn);
 	}
-}
 
-void AAICharacter::TickFollowLeader()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 700.0f;
-	if(!CurrentPath.IsEmpty())
-	{
-		CurrentPath.Empty();
-	}
-	if (!SquadLeader || SquadMembers.IsEmpty()) return;
-
-	int32 Index = SquadLeader->SquadMembers.Find(this);
-	FVector FormationOffset = GetCircleFormationOffset(Index, SquadMembers.Num());
-	FVector TargetLocation = SquadLeader->GetActorLocation() + FormationOffset;
-    
-	FVector MovementDirection = TargetLocation - GetActorLocation();
-	float DistanceToTarget = MovementDirection.Size();
-
-	float MinDistanceThreshold = 10.0f; 
-	if (DistanceToTarget > MinDistanceThreshold)
-	{
-		MovementDirection.Normalize();
-		AddMovementInput(MovementDirection);
-	}
-
-	if(SensedCharacter.Get())
-	{
-		if (HasWeapon())
-		{
-			// Check if the weapon's magazine is empty and reload if necessary
-			if (WeaponComponent->IsMagazineEmpty())
-			{
-				Reload();
-			}
-			Fire(SensedCharacter->GetActorLocation());
-		}
-	}
-}
-
-void AAICharacter::TickPatrol()
-{
-	if (CurrentPath.IsEmpty())
-	{
-		CurrentPath = PathfindingSubsystem->GetRandomPath(GetActorLocation());
-	}
-	MoveAlongPath();
-}
-
-void AAICharacter::TickEngage()
-{
-	if (!SensedCharacter.IsValid())
-	{
-		CurrentState = EAIState::Patrol;
-		return;
-	}
-
-	// Define safe distance range
-	const float MinDistance = 300.0f; // Minimum distance to maintain from the target
-	const float MaxDistance = 800.0f; // Maximum distance to maintain from the target
-
-	FVector ToTarget = SensedCharacter->GetActorLocation() - GetActorLocation();
-	float DistanceToTarget = ToTarget.Size();
-
-	// Determine the movement direction
-	FVector MovementDirection;
-	if (DistanceToTarget > MaxDistance)
-	{
-		// Too far away, move closer
-		MovementDirection = ToTarget;
-	}
-	else if (DistanceToTarget < MinDistance)
-	{
-		// Too close, move away
-		MovementDirection = -ToTarget;
-	}
-	else
-	{
-		// Oscillate between advancing and retreating when within the safe range
-		MovementDirection = (FMath::Sin(GetWorld()->GetTimeSeconds()) > 0) ? ToTarget : -ToTarget;
-	}
-
-	// Normalize movement direction
-	if (!MovementDirection.IsZero())
-	{
-		MovementDirection.Normalize();
-		AddMovementInput(MovementDirection);
-	}
-
-	// Weapon logic
-	if (HasWeapon())
-	{
-		if (WeaponComponent->IsMagazineEmpty())
-		{
-			Reload();
-		}
-		Fire(SensedCharacter->GetActorLocation());
-	}
-
-	// Update path if needed
-	if (CurrentPath.Num() > 0)
-	{
-		CurrentPath.Pop();    
-	}
-}
-
-void AAICharacter::TickEvade()
-{
-	// Find the player and return if it can't find it.
-	if (SensedCharacter.IsValid())
-	{
-		bIsRunningFromEnemy = true;
-		if (CurrentPath.IsEmpty())
-		{
-			CurrentPath = PathfindingSubsystem->GetPathAway(GetActorLocation(), SensedCharacter->GetActorLocation());
-		}
-	}else if(!SensedCharacter.IsValid())
-	{
-		if (bIsRunningFromEnemy)
-		{
-			CurrentPath.Pop();
-			bIsRunningFromEnemy = false;
-		}
-		if (CurrentPath.IsEmpty())
-		{
-			CurrentPath = PathfindingSubsystem->GetRandomPath(GetActorLocation());
-		}
-	}
 	
-	MoveAlongPath();
-}
-
-void AAICharacter::TickCover()
-{
-	//TODO DURING ASSESSMENT 4
-	CurrentPath.Empty();
-
-	FVector CoverVector = PathfindingSubsystem->FindInMap(GetActorLocation(), FName("RockObstacle"));
-
-	CurrentPath.Add(CoverVector);
-}
-
-void AAICharacter::CheckSpecialActions()
-{
-	EAIType	Type = AIType;
-
-	switch (Type)
-	{
-	case EAIType::Scout:
-		if(SensedMoney.IsValid())
-		{
-			bIgnoreStandardTick = true;
-			
-		}else
-		{
-			bIgnoreStandardTick = false;
-		}
-		break;
-	case EAIType::Medic:
-		//Medic logic function
-		break;
-	case EAIType::Sniper:
-		//Sniper logic function (if time permits)
-		break;
-	case EAIType::Soldier:
-		bIgnoreStandardTick = false;
-		break;
-	}
+	PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>();
+	SquadSubsystem = GetWorld()->GetSubsystem<USquadSubsystem>();
+	CurrentPath = PathfindingSubsystem->GetRandomPath(GetActorLocation());
 }
 
 EMoveState AAICharacter::GetMoveState()
@@ -243,51 +82,43 @@ void AAICharacter::OnSensedPawn(APawn* SensedActor)
 	}
 }
 
-void AAICharacter::SenseEnemy()
+bool AAICharacter::ShouldSenseActors()
 {
-	if (!SensedCharacter.IsValid()) return;
-	if (PawnSensingComponent)
+	if(CurrentState == EAIState::Patrol || CurrentState == EAIState::Engage) return true;
+	return false;
+}
+
+void AAICharacter::SenseActors()
+{
+	if (!SensedCharacter.IsValid() || !ShouldSenseActors()) return;
+	
+	if (PawnSensingComponent && !PawnSensingComponent->HasLineOfSightTo(SensedCharacter.Get()))
 	{
-		if (!PawnSensingComponent->HasLineOfSightTo(SensedCharacter.Get()))
-		{
-			SensedCharacter = nullptr;
-		}
+		SensedCharacter = nullptr;
 	}
 }
+
 
 void AAICharacter::SetWeaponStats(EWeaponType Weapon)
 {
-	
-	
+	if (Weapon == WeaponStats.WeaponType) return; // Avoid duplicate setup for the same weapon
+
 	switch (Weapon)
 	{
-	case EWeaponType::Pistol:
-		WeaponStats.WeaponType = EWeaponType::Pistol;
-		WeaponStats.Accuracy = 0.5f;
-		WeaponStats.FireRate = 0.9f;
-		WeaponStats.BaseDamage = 4.0f;
-		WeaponStats.MagazineSize = 6;
-		WeaponStats.ReloadTime = 3;
-
-		EquipWeapon(bHasWeapon, WeaponStats);
+	case Pistol:
+		WeaponStats = {Pistol, 0.5f, 0.9f, 4.0f, 6, 3};
 		break;
-	case EWeaponType::Sniper:
-		WeaponStats.WeaponType = EWeaponType::Sniper;
-		WeaponStats.Accuracy = 1.0f;
-		WeaponStats.FireRate = 7.0f;
-		WeaponStats.BaseDamage = 50.0f;
-		WeaponStats.MagazineSize = 5;
-		WeaponStats.ReloadTime = 15;
-		
-		EquipWeapon(bHasWeapon, WeaponStats);
+	case Sniper:
+		WeaponStats = {Sniper, 0.9f, 7.0f, 50.0f, 5, 15};
 		break;
-	case EWeaponType::Rifle:
+	case Rifle:
 		WeaponStats = DefaultWeaponStats;
-		
-		EquipWeapon(bHasWeapon, WeaponStats);
 		break;
 	}
+
+	EquipWeapon(bHasWeapon, WeaponStats);
 }
+
 
 void AAICharacter::CalculateNextMoveState()
 {
@@ -328,7 +159,8 @@ void AAICharacter::CalculateNextMoveState()
 		NextNodeType == ENavigationNodeType::CLIMBINGDOWN)
 	{
 		NextMoveState = EMoveState::CLIMBINGUP;
-		CurrentPath[CurrentPath.Num() - 2] = CurrentPath[CurrentPath.Num() - 2] + FVector(0,0,200);
+		//Climb above the lip of the 
+		CurrentPath[CurrentPath.Num() - 2] = CurrentPath[CurrentPath.Num() - 2] + FVector(0,0,350);
 		DelayedMoveChange = true;
 	}else if(TargetNodeType == ENavigationNodeType::CLIMBINGDOWN &&
 		NextNodeType == ENavigationNodeType::CLIMBINGUP)
@@ -372,24 +204,24 @@ void AAICharacter::UpdateMoveState()
 		if(!MovementComponent->IsFalling()){
 			MovementComponent->MovementMode = MOVE_Walking;
 		}
-		MovementComponent->MaxWalkSpeed = 300.0f;
+		MovementComponent->MaxWalkSpeed = 500.0f;
 		break;
 	case EMoveState::RUNNING:
 		bIsCrouching = false;
 		if(!MovementComponent->IsFalling()){
 			MovementComponent->MovementMode = MOVE_Walking;
 		}
-		MovementComponent->MaxWalkSpeed = 600.0f;
+		MovementComponent->MaxWalkSpeed = 1000.0f;
 		break;
 	case EMoveState::CLIMBINGUP:
 		bIsCrouching = false;
 		MovementComponent->MovementMode = MOVE_Flying;
-		MovementComponent->MaxFlySpeed = 100.0f;
+		MovementComponent->MaxFlySpeed = 200.0f;
 			break;
 	case EMoveState::CLIMBINGDOWN:
 		bIsCrouching = false;
 		MovementComponent->MovementMode = MOVE_Flying;
-		MovementComponent->MaxFlySpeed = 100.0f;
+		MovementComponent->MaxFlySpeed = 200.0f;
 			break;
 	case EMoveState::CRAWLING:
 		bIsCrouching = true;
@@ -406,10 +238,13 @@ void AAICharacter::UpdateMoveState()
 	}
 }
 
+UBehaviourComponent* AAICharacter::GetBehaviourComponent()
+{
+	return BehaviourComponent;
+}
+
 void AAICharacter::UpdateState()
 {
-	SenseEnemy();
-	
 	if(SquadLeader != this && SquadMembers.Num() > 0 && SquadMembers.Contains(SquadLeader))
 	{
 		CurrentState = EAIState::Follow;
@@ -418,33 +253,53 @@ void AAICharacter::UpdateState()
 	switch (CurrentState)
 	{
 	case EAIState::Patrol:
-		TickPatrol();
+		if(HealthComponent->GetCurrentHealthPercentage()*100 < 40.0f)
+		{
+			CurrentState = EAIState::Cover;
+			BehaviourComponent->TickCover();
+			break;
+		}
+		BehaviourComponent->TickPatrol();
 		break;
 		
 	case EAIState::Follow:
-		if (ConfidenceLevel > 60)
+		if(HealthComponent->GetCurrentHealthPercentage()*100 < 30.0f)
 		{
-			CurrentState = EAIState::Engage;
+			CurrentState = EAIState::Cover;
+			BehaviourComponent->TickCover();
+			break;
 		}
 		BehaviourComponent->TickFollowLeader();
 		break;
 
 	case EAIState::Engage:
-		if (HealthComponent->GetCurrentHealthPercentage() < 0.5f)
+		if (HealthComponent->GetCurrentHealthPercentage()*100 < 0.5f)
 		{
 			CurrentState = EAIState::Evade;
-			TickEvade();
+			BehaviourComponent->TickEvade();
 			break;
 		}
-		TickEngage();
+		BehaviourComponent->TickEngage();
 		break;
 
 	case EAIState::Evade:
-		TickEvade();
+		if (HealthComponent->GetCurrentHealthPercentage()*100 > 0.5f)
+		{
+			CurrentState = EAIState::Patrol;
+			BehaviourComponent->TickPatrol();
+			break;
+		}
+		BehaviourComponent->TickEvade();
 		break;
 
 	case EAIState::Cover:
-		TickCover();
+		if (HealthComponent->GetCurrentHealthPercentage()*100 > 0.5f)
+		{
+			CurrentState = EAIState::Patrol;
+			BehaviourComponent->TickPatrol();
+			break;
+		}
+		BehaviourComponent->TickCover();
 		break;
 
 	default:
@@ -472,7 +327,6 @@ void AAICharacter::ServerUpdateMoveState_Implementation(EAIState NewState)
 	}
 }
 
-
 void AAICharacter::MoveAlongPath()
 {
 	if (CurrentPath.IsEmpty()) return;
@@ -481,6 +335,13 @@ void AAICharacter::MoveAlongPath()
 	AddMovementInput(MovementDirection);
 	if (FVector::Distance(GetActorLocation(), CurrentPath[CurrentPath.Num() - 1]) < PathfindingError)
 	{
+		if(AIType == EAIType::Sniper && IsValid(BehaviourComponent->SniperVantageNode) &&
+			FVector::Distance(GetActorLocation(), BehaviourComponent->SniperVantageNode->GetActorLocation())
+				< PathfindingError)
+		{
+			BehaviourComponent->bSniperInPosition = true;
+		}
+		
 		CurrentPath.Pop();
 		MovementState = NextMoveState;
 		bNextMoveCanBeSet = true;
@@ -496,7 +357,7 @@ void AAICharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 FVector AAICharacter::GetCircleFormationOffset(int32 MemberIndex, int32 SquadSize)
 {
-	float Radius = 75.0f * SquadSize; // The radius of the circle
+	float Radius = 300 * SquadSize; // The radius of the circle
 	float AngleStep = 360.0f / SquadSize; // Calculate the angle step based on the number of members
 
 	// Convert the angle to radians
@@ -514,7 +375,7 @@ EWeaponType AAICharacter::GetWeaponType()
 	if (!WeaponComponent) 
 	{
 		UE_LOG(LogTemp, Error, TEXT("WeaponComponent is null in %s"), *GetName());
-		return EWeaponType::Rifle;
+		return Rifle;
 	}
 	
 	return WeaponComponent->GetWeaponType();
@@ -529,6 +390,7 @@ void AAICharacter::SetAIType(EAIType AITypeToSet)
 		SetWeaponStats(Pistol);
 	}else if(AIType == EAIType::Sniper){
 		SetWeaponStats(Sniper);
+		PawnSensingComponent->SightRadius = 50000;
 	}else
 	{
 		SetWeaponStats(Rifle);
@@ -536,25 +398,37 @@ void AAICharacter::SetAIType(EAIType AITypeToSet)
 }
 
 void AAICharacter::Tick(float DeltaTime)
- {
- 	Super::Tick(DeltaTime);
- 
- 	// Handle squad behavior via the subsystem
- 	if (SquadSubsystem)
- 	{
- 		SquadSubsystem->DetectNearbySquadMembers(this);
- 		SquadSubsystem->AssignSquadLeader(this);
- 		SquadSubsystem->OnLeaderDeath(this);
- 		SquadSubsystem->AdjustBehaviorBasedOnSquadSize(this);
- 	}
+{
+	Super::Tick(DeltaTime);
+
+	// Execute squad-related functions at intervals
+	SquadCheckTimer += DeltaTime;
+	if (SquadSubsystem && SquadCheckTimer >= SquadCheckInterval)
+	{
+		SquadSubsystem->DetectNearbySquadMembers(this);
+		SquadSubsystem->AssignSquadLeader(this);
+		
+		if (!SquadLeader.IsValid()) // Only call OnLeaderDeath if leader has changed
+		{
+			SquadSubsystem->OnLeaderDeath(this);
+		}
+		SquadSubsystem->AdjustBehaviorBasedOnSquadSize(this); // Optional: Only on squad size change
+		SquadCheckTimer = 0.0f;
+	}
 
 	if(bNextMoveCanBeSet)
 	{
 		CalculateNextMoveState();
 	}
 	
- 	SenseEnemy();
- 	UpdateState();
- 	UpdateMoveState();
- }
- 
+	SenseActors();
+	if(!bIgnoreStandardTick)
+	{
+		UpdateState();
+	}
+	UpdateMoveState();
+	if(!CurrentPath.IsEmpty())
+	{
+		MoveAlongPath();
+	}
+}

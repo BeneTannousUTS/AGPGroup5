@@ -2,18 +2,15 @@
 
 
 #include "PlayerCharacter.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
 #include "AGP/AGPGameInstance.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
 
 class UAGPGameInstance;
 // Sets default values
-APlayerCharacter::APlayerCharacter()
+APlayerCharacter::APlayerCharacter(): PlayerHUD(nullptr)
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
@@ -21,15 +18,6 @@ APlayerCharacter::APlayerCharacter()
 void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (const APlayerController* PlayerController = Cast<APlayerController>(GetController()))
-	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem =
-			ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-		{
-			Subsystem->AddMappingContext(InputMappingContext, 0);
-		}
-	}
 
 	if (IsLocallyControlled() && PlayerHUDClass)
 	{
@@ -83,43 +71,8 @@ void APlayerCharacter::Tick(float DeltaTime)
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	if (UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-	{
-		Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-		Input->BindAction(LookAction, ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
-		Input->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
-		Input->BindAction(FireAction, ETriggerEvent::Triggered, this, &APlayerCharacter::FireWeapon);
-	}
 }
 
-void APlayerCharacter::Move(const FInputActionValue& Value)
-{
-	const FVector2D MovementVector = Value.Get<FVector2D>();
-	const FVector ForwardVector = GetActorForwardVector();
-	AddMovementInput(ForwardVector, MovementVector.X);
-	const FVector RightVector = GetActorRightVector();
-	AddMovementInput(RightVector, MovementVector.Y);
-}
-
-void APlayerCharacter::Look(const FInputActionValue& Value)
-{
-	const FVector2D LookVector = Value.Get<FVector2D>() * LookSensitivity;
-	AddControllerYawInput(LookVector.X);
-	AddControllerPitchInput(LookVector.Y);
-}
-
-void APlayerCharacter::FireWeapon(const FInputActionValue& Value)
-{
-	FVector CameraPosition;
-	FRotator CameraRotation;
-	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(CameraPosition, CameraRotation);
-	const FVector CameraForward = UKismetMathLibrary::GetForwardVector(CameraRotation);
-	if (BulletStartPosition)
-	{
-		Fire(BulletStartPosition->GetComponentLocation() + 10000.0f * CameraForward);
-	}
-}
 
 void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 {
@@ -152,11 +105,9 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 				return; // Exit after spawning at the first valid location
 			}
 		}
-
 		UE_LOG(LogTemp, Warning, TEXT("No PlayerStart found with tag %s for team spawn"), *SpawnTag.ToString());
 	}
 }
-
 
 void APlayerCharacter::ServerAISpawn_Implementation(ETeam AITeam, EAIType AIType)
 {

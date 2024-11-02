@@ -16,11 +16,13 @@ public:
 	// Sets default values for this component's properties
 	UHealthComponent();
 
+	float GetMaxHealth() const;
 	bool IsDead();
 	float GetCurrentHealth() const;
 	float GetCurrentHealthPercentage() const;
-	void ApplyDamage(float DamageAmount);
+	void ApplyDamage(float DamageAmount, FVector DamageLocation);
 	void ApplyHealing(float HealingAmount);
+	FVector GetLastKnownDamageLocation();
 
 protected:
 	// Called when the game starts
@@ -29,6 +31,7 @@ protected:
 	float MaxHealth = 100.0f;
 	float CurrentHealth;
 	bool bIsDead = false;
+	FVector LastKnownDamageLocation;
 
 	void OnDeath();
 

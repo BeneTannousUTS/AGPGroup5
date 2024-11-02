@@ -72,6 +72,58 @@ ANavigationNode* UPathfindingSubsystem::GetNodeFromLocation(const FVector& Locat
 	return nullptr;
 }
 
+ANavigationNode* UPathfindingSubsystem::FindHighNode(const FVector& TargetLocation, float HeightPercentage)
+{
+	if (Nodes.Num() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("The nodes array is empty."));
+		return nullptr;
+	}
+
+	// Step 1: Gather all Z-coordinates to determine a dynamic height threshold.
+	TArray<float> Heights;
+	for (ANavigationNode* Node : Nodes)
+	{
+		Heights.Add(Node->GetActorLocation().Z);
+	}
+
+	// Sort heights and select the top percentile based on HeightPercentage.
+	Heights.Sort();
+	int32 Index = FMath::Clamp(FMath::RoundToInt(Heights.Num() * HeightPercentage), 0, Heights.Num() - 1);
+	float DynamicHeightThreshold = Heights[Index]; // Top 25% if HeightPercentage = 0.75, for example.
+
+	// Step 2: Find the closest node to the target that is at or above the dynamic height threshold.
+	ANavigationNode* BestNode = nullptr;
+	float MinDistance = UE_MAX_FLT;
+
+	for (ANavigationNode* Node : Nodes)
+	{
+		FVector NodeLocation = Node->GetActorLocation();
+		if (NodeLocation.Z >= DynamicHeightThreshold)
+		{
+			const float HorizontalDistance = FVector::Dist2D(TargetLocation, NodeLocation);
+			if (HorizontalDistance < MinDistance)
+			{
+				MinDistance = HorizontalDistance;
+				BestNode = Node;
+			}
+		}
+	}
+
+	if (BestNode)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Found a high node at %s"), *BestNode->GetActorLocation().ToString());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No suitable high node found."));
+	}
+
+	return BestNode;
+}
+
+
+
 ANavigationNode* UPathfindingSubsystem::GetRandomNode()
 {
 	// Failure condition

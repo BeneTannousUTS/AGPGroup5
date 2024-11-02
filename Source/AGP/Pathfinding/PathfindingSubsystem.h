@@ -42,6 +42,7 @@ public:
 	TArray<FVector> GetSpawnPositions();
 
 	ANavigationNode* GetNodeFromLocation(const FVector& Location);
+	ANavigationNode* FindHighNode(const FVector& TargetLocation, float HeightPercentage);
 	FVector FindInMap(const FVector& TargetLocation, FName TagName);
 
 protected:

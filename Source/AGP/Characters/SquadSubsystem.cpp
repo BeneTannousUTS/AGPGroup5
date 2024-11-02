@@ -6,7 +6,7 @@
 
 void USquadSubsystem::DetectNearbySquadMembers(AAICharacter* AICharacter)
 {
-	float DetectionRadius = 1000.0f; 
+	float DetectionRadius = 5000.0f; 
 	TArray<FOverlapResult> Overlaps;
 	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(DetectionRadius);
 
@@ -81,7 +81,7 @@ void USquadSubsystem::AdjustBehaviorBasedOnSquadSize(AAICharacter* AICharacter)
 		{
 			AICharacter->CurrentState = EAIState::Engage;
 		}
-		else if(IsValid(AICharacter->SquadLeader) && AICharacter->SquadLeader == AICharacter)
+		else if(IsValid(AICharacter->SquadLeader.Get()) && AICharacter->SquadLeader == AICharacter)
 		{
 			AICharacter->CurrentState = EAIState::Patrol;
 		}else
@@ -89,15 +89,11 @@ void USquadSubsystem::AdjustBehaviorBasedOnSquadSize(AAICharacter* AICharacter)
 			AICharacter->CurrentState = EAIState::Follow;
 		}
 	}
-	else
-	{
-		AICharacter->CurrentState = EAIState::Patrol;
-	}
 }
 
 void USquadSubsystem::OnLeaderDeath(AAICharacter* AICharacter)
 {
-	if (AICharacter->SquadLeader && AICharacter->SquadLeader->HealthComponent->IsDead())
+	if (AICharacter->SquadLeader.Get() && AICharacter->SquadLeader->HealthComponent->IsDead())
 	{
 		DetermineNewLeader(AICharacter);
 	}
@@ -114,7 +110,7 @@ void USquadSubsystem::RevokeLeadershipStatus(AAICharacter* AICharacter)
 void USquadSubsystem::SuggestTargetToLeader(AAICharacter* AICharacter, AAICharacter* PotentialTarget)
 {
 	// Check if AICharacter and its SquadLeader are valid
-	if (!AICharacter || !AICharacter->SquadLeader) return;
+	if (!AICharacter || !AICharacter->SquadLeader.Get()) return;
 
 	// If AICharacter is the squad leader, communicate the target to the squad
 	if (AICharacter->SquadLeader == AICharacter)

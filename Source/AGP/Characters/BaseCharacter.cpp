@@ -2,29 +2,31 @@
 
 
 #include "BaseCharacter.h"
+
+#include "AICharacter.h"
 #include "HealthComponent.h"
 #include "WeaponComponent.h"
+#include "AGP/AGPGameInstance.h"
 #include "Net/UnrealNetwork.h"
 
+class UAGPGameInstance;
+class AAICharacter;
 // Sets default values
 ABaseCharacter::ABaseCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	bReplicates = true;
 
 	BulletStartPosition = CreateDefaultSubobject<USceneComponent>("Bullet Start");
 	BulletStartPosition->SetupAttachment(GetRootComponent());
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>("Health Component");
-	WeaponComponent = CreateDefaultSubobject<UWeaponComponent>(TEXT("WeaponComponent"));
-	WeaponComponent->SetIsReplicated(true);
 }
 
 // Called when the game starts or when spawned
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	
 }
 
 void ABaseCharacter::Fire(const FVector& FireAtLocation)
@@ -49,10 +51,6 @@ void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ABaseCharacter, WeaponComponent);
 }
 
-UWeaponComponent* ABaseCharacter::GetWeaponComponent()
-{
-	return WeaponComponent;
-}
 
 // Called every frame
 void ABaseCharacter::Tick(float DeltaTime)
@@ -75,18 +73,12 @@ bool ABaseCharacter::IsCrouching()
 	return bIsCrouching;
 }
 
-
 void ABaseCharacter::EquipWeapon(bool bEquipWeapon, const FWeaponStats& WeaponStats)
 {
-	if(GetLocalRole() == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		if(EquipWeaponImplementation(bEquipWeapon, WeaponStats))
-		{
-			MulticastEquipWeapon(bEquipWeapon);
-		}
-	}else if(GetLocalRole() == ROLE_AutonomousProxy)
-	{
-		ServerEquipWeapon(bEquipWeapon, WeaponStats);
+		EquipWeaponImplementation(bEquipWeapon, WeaponStats);
+		MulticastEquipWeapon(bEquipWeapon);
 	}
 }
 
@@ -96,7 +88,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-bool ABaseCharacter::EquipWeaponImplementation(bool bEquipWeapon, const FWeaponStats& WeaponStats)
+void ABaseCharacter::EquipWeaponImplementation(bool bEquipWeapon, const FWeaponStats& WeaponStats)
 {
 	// Create or remove the weapon component depending on whether we are trying to equip a weapon and we
 	// don't already have one. Or if we are trying to unequip a weapon and we do have one.
@@ -115,10 +107,10 @@ bool ABaseCharacter::EquipWeaponImplementation(bool bEquipWeapon, const FWeaponS
 	if (HasWeapon())
 	{
 		// Set the weapons stats to the given weapon stats.
+		UE_LOG(LogTemp, Display, TEXT("Equipping weapon"))
 		WeaponComponent->SetWeaponStats(WeaponStats);
 	}
-	
-	//EquipWeaponGraphical(bEquipWeapon);
+
 	if (bEquipWeapon)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Player has equipped weapon."))
@@ -127,20 +119,10 @@ bool ABaseCharacter::EquipWeaponImplementation(bool bEquipWeapon, const FWeaponS
 	{
 		UE_LOG(LogTemp, Display, TEXT("Player has unequipped weapon."))
 	}
-
-	return true;
-}
-
-void ABaseCharacter::ServerEquipWeapon_Implementation(bool bEquipWeapon, const FWeaponStats& WeaponStats)
-{
-	if(EquipWeaponImplementation(bEquipWeapon, WeaponStats))
-	{
-		MulticastEquipWeapon(bEquipWeapon);
-	}
 }
 
 void ABaseCharacter::MulticastEquipWeapon_Implementation(bool bEquipWeapon)
 {
+	//EquipWeaponImplementation(bEquipWeapon, WeaponStats);
 	//EquipWeaponGraphical(bEquipWeapon);
 }
-

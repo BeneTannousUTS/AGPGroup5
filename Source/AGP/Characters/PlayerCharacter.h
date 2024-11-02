@@ -4,9 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AICharacter.h"
-#include "GameFramework/Character.h"
 #include "BaseCharacter.h"
-#include "InputActionValue.h"
 #include "PlayerCharacterHUD.h"
 #include "PlayerCharacter.generated.h"
 
@@ -25,17 +23,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	UPROPERTY(EditDefaultsOnly)
-	UInputAction* MoveAction;
-	UPROPERTY(EditDefaultsOnly)
-	UInputAction* LookAction;
-	UPROPERTY(EditDefaultsOnly)
-	UInputAction* JumpAction;
-	UPROPERTY(EditDefaultsOnly)
-	UInputAction* FireAction;
-	UPROPERTY(EditDefaultsOnly)
-	UInputMappingContext* InputMappingContext;
+	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UPlayerCharacterHUD> PlayerHUDClass;
 	UPROPERTY()
@@ -55,10 +43,6 @@ public:
 	void SpawnAI(EAIType AIType);
 	
 private:
-	
-	void Move(const FInputActionValue& Value);
-	void Look(const FInputActionValue& Value);
-	void FireWeapon(const FInputActionValue& Value);
 
 	void AISpawnImplementation(ETeam AITeam, EAIType AIType);
 	UFUNCTION(Server, Reliable)

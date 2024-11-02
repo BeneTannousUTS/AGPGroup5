@@ -25,7 +25,6 @@ void UAGPGameInstance::UpdateBalance(int32 Change)
   }
  }
 
-
  UClass* UAGPGameInstance::GetAIClass() const
  {
   return AIClass.Get();

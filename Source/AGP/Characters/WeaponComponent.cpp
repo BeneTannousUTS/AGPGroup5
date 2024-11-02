@@ -2,20 +2,25 @@
 
 
 #include "WeaponComponent.h"
-
 #include "BaseCharacter.h"
 #include "HealthComponent.h"
+#include "Net/UnrealNetwork.h"
 
 
 // Sets default values for this component's properties
-UWeaponComponent::UWeaponComponent()
+UWeaponComponent::UWeaponComponent(): ShotsLeft(0)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
 	
 	// ...
+}
+
+void UWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UWeaponComponent, WeaponStats);
 }
 
 
@@ -55,7 +60,7 @@ bool UWeaponComponent::Fire(const FVector& BulletStart, const FVector& FireAtLoc
 			{
 				if (UHealthComponent* HitCharacterHealth = HitCharacter->GetComponentByClass<UHealthComponent>())
 				{
-					HitCharacterHealth->ApplyDamage(WeaponStats.BaseDamage);
+					HitCharacterHealth->ApplyDamage(WeaponStats.BaseDamage, BulletStart);
 				}
 				DrawDebugLine(GetWorld(), BulletStart, HitResult.ImpactPoint, FColor::Green, false, 1.0f);
 			}

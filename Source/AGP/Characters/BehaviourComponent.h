@@ -32,11 +32,28 @@ protected:
 	void TickEngage();
 	void TickEvade();
 	void TickCover();
+	bool IsCoverPositionValid(const FVector& CoverPosition, const FVector& ObstacleLocation);
+
+	float CoverOffsetDistance = 50.0f;
 
 	//Logic for any exceptions to AI logic, i.e. looking for money, healing squad members, etc
 	void CheckSpecialActions();
 
+	void ScoutTick();
+	void MedicTick();
+
+	void SeekHealing();
+	//Since Snipers operate independently they will need a few helper functions
+	void SniperTick();
+
+	UPROPERTY()
+	ANavigationNode* SniperVantageNode = nullptr;
+	bool bSniperInPosition = false;
+
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	//Helper function to be called when sniper takes damage
+	void SeekVantagePoint();
 };

@@ -19,7 +19,7 @@ struct FWeaponStats
 {
 	GENERATED_BODY()
 public:
-	EWeaponType WeaponType = EWeaponType::Rifle;
+	EWeaponType WeaponType = Rifle;
 	float Accuracy = 0.3f;
 	float FireRate = 0.7f;
 	float BaseDamage = 7.0f;
@@ -35,13 +35,15 @@ class AGP_API UWeaponComponent : public UActorComponent
 public:	
 	// Sets default values for this component's properties
 	UWeaponComponent();
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(Replicated)
 	FWeaponStats WeaponStats;
-	int32 RoundsRemainingInMagazine;
 	float TimeSinceLastShot = 0.0f;
 
 public:	

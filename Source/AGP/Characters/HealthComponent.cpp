@@ -3,14 +3,22 @@
 
 #include "HealthComponent.h"
 
+#include "AICharacter.h"
+#include "BehaviourComponent.h"
+
 // Sets default values for this component's properties
-UHealthComponent::UHealthComponent()
+UHealthComponent::UHealthComponent(): CurrentHealth(0)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	
+
 	// ...
+}
+
+float UHealthComponent::GetMaxHealth() const
+{
+	return MaxHealth;
 }
 
 bool UHealthComponent::IsDead()
@@ -20,15 +28,17 @@ bool UHealthComponent::IsDead()
 
 float UHealthComponent::GetCurrentHealth() const
 {
+	
 	return CurrentHealth;
 }
 
 float UHealthComponent::GetCurrentHealthPercentage() const
 {
+	UE_LOG(LogTemp, Warning, TEXT("The character health is %f"), CurrentHealth/MaxHealth);
 	return CurrentHealth / MaxHealth;
 }
 
-void UHealthComponent::ApplyDamage(float DamageAmount)
+void UHealthComponent::ApplyDamage(float DamageAmount, FVector DamageLocation)
 {
 	if (bIsDead) return;
 	CurrentHealth -= DamageAmount;
@@ -36,6 +46,13 @@ void UHealthComponent::ApplyDamage(float DamageAmount)
 	{
 		OnDeath();
 		CurrentHealth = 0.0f;
+	}
+
+	LastKnownDamageLocation = DamageLocation;
+	
+	if(Cast<AAICharacter>(GetOwner())->GetWeaponType() == Sniper)
+	{
+		Cast<AAICharacter>(GetOwner())->GetBehaviourComponent()->SeekVantagePoint(); //Change Vantage point if sniper takes damage
 	}
 }
 
@@ -47,6 +64,11 @@ void UHealthComponent::ApplyHealing(float HealingAmount)
 	{
 		CurrentHealth = 100.0f;
 	}
+}
+
+FVector UHealthComponent::GetLastKnownDamageLocation()
+{
+	return LastKnownDamageLocation;
 }
 
 

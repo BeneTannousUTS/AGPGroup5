@@ -2,10 +2,9 @@
 
 
 #include "BehaviourComponent.h"
-
 #include "AICharacter.h"
+#include "HealthComponent.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 class AAICharacter;
 // Sets default values for this component's properties
@@ -25,17 +24,19 @@ void UBehaviourComponent::BeginPlay()
 	Super::BeginPlay();
 
 	OwnerCharacter = Cast<AAICharacter>(GetOwner());
-	
+	if(OwnerCharacter->GetWeaponType() == Sniper)
+	{
+		OwnerCharacter->bIgnoreStandardTick = true;
+	}
 }
 
 void UBehaviourComponent::TickFollowLeader()
 {
-	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = 700.0f;
 	if(!OwnerCharacter->CurrentPath.IsEmpty())
 	{
 		OwnerCharacter->CurrentPath.Empty();
 	}
-	if (!OwnerCharacter->SquadLeader || OwnerCharacter->SquadMembers.IsEmpty()) return;
+	if (!OwnerCharacter->SquadLeader.Get() || OwnerCharacter->SquadMembers.IsEmpty()) return;
 
 	int32 Index = OwnerCharacter->SquadLeader->SquadMembers.Find(OwnerCharacter);
 	FVector FormationOffset = OwnerCharacter->GetCircleFormationOffset(Index,
@@ -72,7 +73,6 @@ void UBehaviourComponent::TickPatrol()
 	{
 		OwnerCharacter->CurrentPath = OwnerCharacter->PathfindingSubsystem->GetRandomPath(OwnerCharacter->GetActorLocation());
 	}
-	OwnerCharacter->MoveAlongPath();
 }
 
 void UBehaviourComponent::TickEngage()
@@ -83,30 +83,7 @@ void UBehaviourComponent::TickEngage()
 		return;
 	}
 
-	// Define safe distance range
-	const float MinDistance = 300.0f; // Minimum distance to maintain from the target
-	const float MaxDistance = 800.0f; // Maximum distance to maintain from the target
-
-	FVector ToTarget = OwnerCharacter->SensedCharacter->GetActorLocation() - OwnerCharacter->GetActorLocation();
-	float DistanceToTarget = ToTarget.Size();
-
-	// Determine the movement direction
-	FVector MovementDirection;
-	if (DistanceToTarget > MaxDistance)
-	{
-		// Too far away, move closer
-		MovementDirection = ToTarget;
-	}
-	else if (DistanceToTarget < MinDistance)
-	{
-		// Too close, move away
-		MovementDirection = -ToTarget;
-	}
-	else
-	{
-		// Oscillate between advancing and retreating when within the safe range
-		MovementDirection = (FMath::Sin(GetWorld()->GetTimeSeconds()) > 0) ? ToTarget : -ToTarget;
-	}
+	FVector MovementDirection = OwnerCharacter->SensedCharacter->GetActorLocation() - OwnerCharacter->GetActorLocation();
 
 	// Normalize movement direction
 	if (!MovementDirection.IsZero())
@@ -148,28 +125,63 @@ void UBehaviourComponent::TickEvade()
 	{
 		if (OwnerCharacter->bIsRunningFromEnemy)
 		{
-			OwnerCharacter->CurrentPath.Pop();
+			OwnerCharacter->CurrentPath.Empty();
 			OwnerCharacter->bIsRunningFromEnemy = false;
-		}
-		if (OwnerCharacter->CurrentPath.IsEmpty())
-		{
-			OwnerCharacter->CurrentPath = OwnerCharacter->PathfindingSubsystem->GetRandomPath(
-				OwnerCharacter->GetActorLocation());
+			OwnerCharacter->CurrentState = EAIState::Patrol;
 		}
 	}
-	OwnerCharacter->MoveAlongPath();
 }
 
 void UBehaviourComponent::TickCover()
 {
-	//TODO DURING ASSESSMENT 4
 	OwnerCharacter->CurrentPath.Empty();
 
-	FVector CoverVector = OwnerCharacter->PathfindingSubsystem->FindInMap(
+	FVector ObstacleLocation = OwnerCharacter->PathfindingSubsystem->FindInMap(
 		OwnerCharacter->GetActorLocation(), FName("RockObstacle"));
 
-	OwnerCharacter->CurrentPath.Add(CoverVector);
+	if (ObstacleLocation.IsZero())
+	{
+		// No obstacle found, return early to avoid unnecessary calculations
+		return;
+	}
+
+	// Get the last known location where the character took damage
+	
+	FVector DamageLocation = OwnerCharacter->HealthComponent->GetLastKnownDamageLocation();
+
+	// Calculate a position on the opposite side of the obstacle, facing away from the damage location
+	FVector CoverDirection = (OwnerCharacter->GetActorLocation() - DamageLocation).GetSafeNormal();
+	FVector CoverVector = ObstacleLocation + CoverDirection * CoverOffsetDistance;
+
+	// Check if this CoverVector is actually behind the obstacle
+	if (!IsCoverPositionValid(CoverVector, ObstacleLocation))
+	{
+		// If not, try a fallback position (e.g., using a perpendicular vector or another obstacle)
+		CoverVector = ObstacleLocation; // Fallback, refine this if needed.
+	}
+	
+
+	// Set the calculated cover vector as the target cover point
+	OwnerCharacter->CurrentPath = OwnerCharacter->PathfindingSubsystem->GetPath(
+		OwnerCharacter->GetActorLocation(), CoverVector);
 }
+
+bool UBehaviourComponent::IsCoverPositionValid(const FVector& CoverPosition, const FVector& ObstacleLocation)
+{
+	// Perform a line trace to check if the cover position is hidden from the damage source
+	FHitResult Hit;
+	FVector TraceStart = ObstacleLocation;
+	FVector TraceEnd = CoverPosition;
+
+	// Use line tracing to determine if there's an obstacle blocking the view
+	bool bHit = OwnerCharacter->GetWorld()->LineTraceSingleByChannel(
+		Hit, TraceStart, TraceEnd, ECC_Visibility);
+    
+	// Return true if there's an obstacle (e.g., the rock) in between
+	return bHit && IsValid(Hit.GetActor()) && Hit.GetActor()->ActorHasTag(FName("RockObstacle"));
+}
+
+//---------------SPECIAL TICK FUNCTIONS BEGIN HERE----------------------//
 
 void UBehaviourComponent::CheckSpecialActions()
 {
@@ -178,24 +190,123 @@ void UBehaviourComponent::CheckSpecialActions()
 	switch (Type)
 	{
 	case EAIType::Scout:
-		if(OwnerCharacter->SensedMoney.IsValid())
-		{
-			OwnerCharacter->bIgnoreStandardTick = true;
-			
-		}else
-		{
-			OwnerCharacter->bIgnoreStandardTick = false;
-		}
+		ScoutTick();
 		break;
 	case EAIType::Medic:
-		//Medic logic function
-			break;
+		MedicTick();
+		break;
 	case EAIType::Sniper:
-		//Sniper logic function (if time permits)
-			break;
+		SniperTick();
+		break;
 	case EAIType::Soldier:
 		OwnerCharacter->bIgnoreStandardTick = false;
 		break;
+	}
+}
+
+void UBehaviourComponent::ScoutTick()
+{
+	if (OwnerCharacter->SensedMoney.IsValid())
+	{
+		OwnerCharacter->bIgnoreStandardTick = true;
+
+		// Move toward money pickup
+		FVector MoneyLocation = OwnerCharacter->SensedMoney->GetActorLocation();
+		FVector MoveDirection = MoneyLocation - OwnerCharacter->GetActorLocation();
+		MoveDirection.Normalize();
+		OwnerCharacter->AddMovementInput(MoveDirection);
+	}
+	else
+	{
+		OwnerCharacter->bIgnoreStandardTick = false;
+	}
+}
+
+void UBehaviourComponent::MedicTick()
+{
+	// Identify any squad members with low health
+	for (auto& SquadMember : OwnerCharacter->SquadMembers)
+	{
+		if (SquadMember && SquadMember->HealthComponent->GetCurrentHealth()
+			< SquadMember->HealthComponent->GetMaxHealth() * 0.5f)
+		{
+			OwnerCharacter->bIgnoreStandardTick = true;
+            
+			// Move towards the injured squad member
+			FVector MemberLocation = SquadMember->GetActorLocation();
+			FVector MoveDirection = MemberLocation - OwnerCharacter->GetActorLocation();
+			MoveDirection.Normalize();
+			OwnerCharacter->AddMovementInput(MoveDirection);
+
+			// If close enough, heal the squad member
+			float DistanceToMember = FVector::Dist(OwnerCharacter->GetActorLocation(), MemberLocation);
+			if (DistanceToMember < 100.0f)
+			{
+				SquadMember->HealthComponent->ApplyHealing(5);
+			}
+			return;  // Exit after healing one target to avoid overlap
+		}
+	}
+
+	// If no squad members need healing, enable standard behavior
+	OwnerCharacter->bIgnoreStandardTick = false;
+}
+
+void UBehaviourComponent::SeekHealing()
+{
+	return;
+}
+
+void UBehaviourComponent::SeekVantagePoint()
+{
+	if(!OwnerCharacter->CurrentPath.IsEmpty())
+	{
+		OwnerCharacter->CurrentPath.Empty();
+	}
+	
+	SniperVantageNode = OwnerCharacter->PathfindingSubsystem->FindHighNode(
+		OwnerCharacter->GetActorLocation(), 0.75f); // Targeting the top 25%
+
+	OwnerCharacter->CurrentPath = OwnerCharacter->PathfindingSubsystem->GetPath(
+		OwnerCharacter->GetActorLocation(), SniperVantageNode->GetActorLocation());
+
+	bSniperInPosition = false;
+}
+
+void UBehaviourComponent::SniperTick()
+{
+	if (OwnerCharacter->HealthComponent->GetCurrentHealthPercentage() < 35.0f)
+	{
+		SeekHealing(); // Implement logic to find nearby allies for healing.
+		return; // Stop further processing if seeking healing.
+	}
+
+	if(!bSniperInPosition && !SniperVantageNode)
+	{
+		SeekVantagePoint(); //Find sniper perch.
+		return;
+	}
+	if(!bSniperInPosition && SniperVantageNode)
+	{
+		return;
+	}
+
+	if (OwnerCharacter->SensedCharacter.IsValid() && bSniperInPosition)
+	{
+		if (OwnerCharacter->HasWeapon())
+		{
+			FVector TargetDirection = OwnerCharacter->GetActorLocation()
+			- OwnerCharacter->SensedCharacter->GetActorLocation();
+			TargetDirection.Normalize();
+			OwnerCharacter->SetActorRotation(FMath::Lerp(OwnerCharacter->GetActorRotation(),
+				TargetDirection.Rotation(), 0.05f));
+
+			if (OwnerCharacter->WeaponComponent->IsMagazineEmpty())
+			{
+				OwnerCharacter->WeaponComponent->Reload();
+			}
+			OwnerCharacter->Fire(OwnerCharacter->SensedCharacter->GetActorLocation());
+		}
 	}
 }
 

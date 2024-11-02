@@ -84,16 +84,6 @@ protected:
 	void OnSensedPawn(APawn* Pawn);
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	// Logic for different AI states
-	void TickFollowLeader();
-	void TickPatrol();
-	void TickEngage();
-	void TickEvade();
-	void TickCover();
-
-	//Logic for any exceptions to AI logic, i.e. looking for money, healing squad members, etc
-	void CheckSpecialActions();
 	
 	// AI state management
 	UPROPERTY(EditAnywhere, Replicated)
@@ -118,7 +108,7 @@ protected:
 	TArray<FVector> CurrentPath;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated)
-	AAICharacter* SquadLeader;
+	TWeakObjectPtr<AAICharacter> SquadLeader;
 
 	UFUNCTION(BlueprintCallable)
 	bool IsLeader();
@@ -161,13 +151,14 @@ protected:
 	int AdrenalineLevel = 0;
 	int ConfidenceLevel = 100;
 
-	void SenseEnemy();
+	bool ShouldSenseActors();
+	void SenseActors();
 
 	/**
 	 * Some arbitrary error value for determining how close is close enough before moving onto the next step in the path.
 	 */
 	UPROPERTY(EditAnywhere)
-	float PathfindingError = 150.0f; // 150 cm from target by default.
+	float PathfindingError = 300.0f; // 150 cm from target by default.
 
 	bool bIsRunningFromEnemy;
 
@@ -196,9 +187,13 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSetupAI(ETeam InAITeam, EAIType InAIType);
+
+	UBehaviourComponent* GetBehaviourComponent();
 	
 private:
 	void UpdateState();
 	bool bNextMoveCanBeSet = true;
 	bool bIgnoreStandardTick = false;
+	float SquadCheckInterval = 0.5f;
+	float SquadCheckTimer = 0.0f;
 };
