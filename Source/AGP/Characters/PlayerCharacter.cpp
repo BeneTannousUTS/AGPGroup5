@@ -98,6 +98,15 @@ void APlayerCharacter::SpawnAI(EAIType AIType)
 	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to get UAGPGameInstance"));
+		return;
+	}
+	
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		AISpawnImplementation(ETeam::Team1, AIType);
+	}else
+	{
+		ServerAISpawn(ETeam::Team2, AIType);
 	}
 }
 
@@ -174,8 +183,8 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 
 				if (SpawnedAI)
 				{
-					SpawnedAI->AITeam = AITeam;
-					SpawnedAI->SetAIType(AIType);
+					SpawnedAI->SetReplicates(true);
+					SpawnedAI->MulticastSetupAI(AITeam, AIType);
 					UE_LOG(LogTemp, Log, TEXT("Spawned AI for Team %s at %s"), *SpawnTag.ToString(), *SpawnTransform.ToString());
 				}
 				return; // Exit after spawning at the first valid location
@@ -189,15 +198,6 @@ void APlayerCharacter::AISpawnImplementation(ETeam AITeam, EAIType AIType)
 
 void APlayerCharacter::ServerAISpawn_Implementation(ETeam AITeam, EAIType AIType)
 {
-	if (HasAuthority())
-	{
-		UE_LOG(LogTemp, Log, TEXT("ServerAISpawn called on the server"));
-		AISpawnImplementation(AITeam, AIType);
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("ServerAISpawn was called on a client, but should only run on the server."));
-	}
+	UE_LOG(LogTemp, Log, TEXT("ServerAISpawn called on the server"));
+	AISpawnImplementation(AITeam, AIType);
 }
-
-

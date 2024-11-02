@@ -15,7 +15,7 @@ APickup::APickup()
 }
 
 void APickup::OnPickupOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                              UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitInfo)
+							  UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitInfo)
 {
 	if (AAICharacter* AIChar = Cast<AAICharacter>(OtherActor))
 	{
@@ -94,6 +94,7 @@ void APickup::HudUpdate(ETeam AITeam)
 				}
 			}
 		}
+		Destroy(); // Destroy server-side to ensure cleanup across clients.
 	}
 }
 

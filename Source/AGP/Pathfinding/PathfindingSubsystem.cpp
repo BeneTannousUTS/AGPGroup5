@@ -110,7 +110,7 @@ ANavigationNode* UPathfindingSubsystem::FindNearestNode(const FVector& TargetLoc
 	return ClosestNode;
 }
 
-FVector UPathfindingSubsystem::FindObjectWithTag(const FVector& TargetLocation, FName TagName)
+FVector UPathfindingSubsystem::FindInMap(const FVector& TargetLocation, FName TagName)
 {
 	AActor* ClosestActor = nullptr;
 	float MinDistance = UE_MAX_FLT;
