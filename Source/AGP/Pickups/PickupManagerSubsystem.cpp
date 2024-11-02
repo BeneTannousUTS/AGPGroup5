@@ -51,7 +51,10 @@ void UPickupManagerSubsystem::SpawnWeaponPickup()
 		FVector SpawnPosition =
 				PossibleSpawnLocations[FMath::RandRange(0, PossibleSpawnLocations.Num()-1)];
 		SpawnPosition.Z += 50.0f;
-		if (GameInstance->Balance < 500)
+
+		GetWorld()->SpawnActor<APickup>(GameInstance->GetMoneyPickupClass(), SpawnPosition + FVector(0,0,35.0f), FRotator::ZeroRotator);
+		
+		/*if (GameInstance->Balance < 500)
 		{
 			GetWorld()->SpawnActor<APickup>(
 			GameInstance->GetMoneyPickupClass(), SpawnPosition + FVector(0,0,35.0f), FRotator::ZeroRotator);
@@ -63,7 +66,7 @@ void UPickupManagerSubsystem::SpawnWeaponPickup()
 			GetWorld()->SpawnActor<APickup>(
 			GameInstance->GetWeaponPickupClass(), SpawnPosition, FRotator::ZeroRotator);
 			//UE_LOG(LogTemp, Display, TEXT("Weapon Pickup Spawned"));
-		}
+		}*/
 	}
 	else
 	{

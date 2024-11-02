@@ -4,6 +4,7 @@
 #include "AGPGameModeBase.h"
 
 #include "AGPGameInstance.h"
+#include "AGPPlayerState.h"
 
 
 AAGPGameModeBase::AAGPGameModeBase()
@@ -14,18 +15,24 @@ AAGPGameModeBase::AAGPGameModeBase()
 void AAGPGameModeBase::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-
-	UAGPGameInstance* GameInstance = Cast<UAGPGameInstance>(GetGameInstance());
-	if (GameInstance)
+	
+	if (NewPlayer)
 	{
-		if (PlayerCount % 2 == 0)
+		if (UAGPGameInstance* GameInstance = Cast<UAGPGameInstance>(GetGameInstance()))
 		{
-			GameInstance->PlayerTeam = ETeam::Team1;
+			if (AAGPPlayerState* PlayerState = NewPlayer->GetPlayerState<AAGPPlayerState>())
+			{
+				if (NewPlayer->IsLocalController())
+				{
+					PlayerState->PlayerTeam = ETeam::Team1;
+					GameInstance->PlayerTeam = ETeam::Team1;
+				}
+				else
+				{
+					PlayerState->PlayerTeam = ETeam::Team2;
+					GameInstance->PlayerTeam = ETeam::Team2;
+				}
+			}
 		}
-		else
-		{
-			GameInstance->PlayerTeam = ETeam::Team2;
-		}
-		PlayerCount++;
 	}
 }

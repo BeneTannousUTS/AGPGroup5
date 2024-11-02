@@ -15,7 +15,13 @@ class AGP_API APickup : public APickupBase
 	GENERATED_BODY()
 
 protected:
-	
+	APickup();
 	virtual void OnPickupOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitInfo) override;
+
+	UFUNCTION(Server, Reliable)
+	void ServerPickupCollide(ETeam AITeam);
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastHudUpdate(ETeam AITeam);
+	void HudUpdate(ETeam AITeam);
 };

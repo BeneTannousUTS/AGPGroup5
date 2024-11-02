@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "BaseCharacter.h"
 #include "AGP/Pathfinding/NavigationNode.h"
-#include "AGP/Pickups/Pickup.h"
 #include "AICharacter.generated.h"
 
 class UPawnSensingComponent;
 class UPathfindingSubsystem;
 class USquadSubsystem;
+class APickup;
 
 UENUM(BlueprintType)
 enum class EAIType : uint8

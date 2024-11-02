@@ -532,7 +532,7 @@ EWeaponType AAICharacter::GetWeaponType()
 {
 	if (!WeaponComponent) 
 	{
-		UE_LOG(LogTemp, Error, TEXT("WeaponComponent is null in %s"), *GetName());
+		//UE_LOG(LogTemp, Error, TEXT("WeaponComponent is null in %s"), *GetName());
 		return EWeaponType::Rifle;
 	}
 	

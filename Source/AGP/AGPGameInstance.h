@@ -21,11 +21,10 @@ public:
 	UClass* GetWeaponPickupClass() const;
 	UClass* GetMoneyPickupClass() const;
 	UClass* GetAIClass() const;
-	int32 Balance = 0;
-	ETeam PlayerTeam;
-	void UpdateBalance(int32 Change);
 	UPROPERTY()
 	UPlayerCharacterHUD* HUD;
+	UPROPERTY(EditAnywhere)
+	ETeam PlayerTeam;
 	
 
 protected:

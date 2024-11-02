@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "AGP/AGPGameInstance.h"
+#include "AGP/AGPPlayerState.h"
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -53,22 +54,50 @@ void APlayerCharacter::BeginPlay()
 	}
 }
 
+void APlayerCharacter::UpdateHUDBalance(int32 NewBalance)
+{
+	PlayerHUD->SetBalance(NewBalance);
+}
+
 void APlayerCharacter::SpawnAI(EAIType AIType)
 {
-	UAGPGameInstance* AGPGameInstance = Cast<UAGPGameInstance>(GetGameInstance());
-
-	if(!AGPGameInstance)
+	// Get the GameInstance and check if it is valid
+	if (UAGPGameInstance* AGPGameInstance = Cast<UAGPGameInstance>(GetGameInstance()))
+	{
+		// Get the PlayerState and determine the player's team
+		AAGPPlayerState* AGPPlayerState = GetPlayerState<AAGPPlayerState>();
+		if (!AGPPlayerState)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Failed to get PlayerState"));
+			return;
+		}
+		ETeam PlayerTeam = AGPGameInstance->PlayerTeam;
+		if (PlayerTeam == ETeam::Team1)
+		{
+			UE_LOG(LogTemp, Error, TEXT("PLAYER ON TEAM 1"))
+		} else if (PlayerTeam == ETeam::Team2)
+		{
+			UE_LOG(LogTemp, Error, TEXT("PLAYER ON TEAM 2"))
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("PLAYER HAS NO TEAM"))
+		}
+		
+		if (HasAuthority())
+		{
+			// Spawn AI on the same team as the player
+			AISpawnImplementation(PlayerTeam, AIType);
+		}
+		else
+		{
+			// Spawn AI on the server, passing the player's team to ServerAISpawn
+			ServerAISpawn(PlayerTeam, AIType);
+		}
+	}
+	else
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Failed to get UAGPGameInstance"));
-		return;
-	}
-	
-	if (HasAuthority())
-	{
-		AISpawnImplementation(ETeam::Team1, AIType);
-	}else
-	{
-		ServerAISpawn(ETeam::Team2, AIType);
 	}
 }
 
