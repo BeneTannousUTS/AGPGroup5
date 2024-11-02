@@ -1,7 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "AICharacter.h"
-
 #include "BehaviourComponent.h"
 #include "HealthComponent.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
@@ -11,11 +10,12 @@
 #include "Net/UnrealNetwork.h"
 #include "Perception/PawnSensingComponent.h"
 
-AAICharacter::AAICharacter(): PathfindingSubsystem(nullptr), SquadSubsystem(nullptr), SquadLeader(nullptr)
+AAICharacter::AAICharacter(): PathfindingSubsystem(nullptr), SquadSubsystem(nullptr), SquadLeader(nullptr), BehaviourComponent(nullptr)
 {
 	PrimaryActorTick.bCanEverTick = true;
 	
 	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("Pawn Sensing Component");
+	BehaviourComponent = CreateDefaultSubobject<UBehaviourComponent>(TEXT("BehaviourComponent"));
 }
 
 void AAICharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -38,7 +38,6 @@ void AAICharacter::BeginPlay()
 	Super::BeginPlay();
 	PathfindingSubsystem = GetWorld()->GetSubsystem<UPathfindingSubsystem>();
 	SquadSubsystem = GetWorld()->GetSubsystem<USquadSubsystem>();
-	BehaviourComponent = CreateDefaultSubobject<UBehaviourComponent>(TEXT("BehaviourComponent"));
 	CurrentPath = PathfindingSubsystem->GetRandomPath(GetActorLocation());
 
 	if (PawnSensingComponent)
