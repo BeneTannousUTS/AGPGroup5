@@ -56,4 +56,7 @@ public:
 
 	//Helper function to be called when sniper takes damage
 	void SeekVantagePoint();
+
+private:
+	TWeakObjectPtr<AAICharacter> ClosestHealer;
 };

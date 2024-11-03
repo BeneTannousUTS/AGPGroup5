@@ -3,6 +3,8 @@
 
 #include "BehaviourComponent.h"
 #include "AICharacter.h"
+#include "AIHelpers.h"
+#include "EngineUtils.h"
 #include "HealthComponent.h"
 #include "AGP/Pathfinding/PathfindingSubsystem.h"
 
@@ -254,7 +256,25 @@ void UBehaviourComponent::MedicTick()
 
 void UBehaviourComponent::SeekHealing()
 {
-	return;
+	for(TActorIterator<AAICharacter> Itr(GetWorld()); Itr; ++Itr)
+	{
+		if(Itr->GetTeam() == OwnerCharacter->GetTeam())
+		{
+			if(!ClosestHealer.IsValid())
+			{
+				ClosestHealer = *Itr;
+			}
+
+			float CurrentHealerDistance = FVector::Dist(OwnerCharacter->GetActorLocation(), ClosestHealer->GetActorLocation());
+			float NewHealerDistance = FVector::Dist(OwnerCharacter->GetActorLocation(), ClosestHealer->GetActorLocation());
+			
+			if(FVector::Dist(OwnerCharacter->GetActorLocation() - ClosestHealer->GetActorLocation())
+				 Itr->GetActorLocation() - ClosestHealer->GetActorLocation())
+			{
+				
+			}
+		}
+	}
 }
 
 void UBehaviourComponent::SeekVantagePoint()
