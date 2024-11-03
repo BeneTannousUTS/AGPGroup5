@@ -238,11 +238,6 @@ void AAICharacter::UpdateMoveState()
 	}
 }
 
-UBehaviourComponent* AAICharacter::GetBehaviourComponent()
-{
-	return BehaviourComponent;
-}
-
 void AAICharacter::UpdateState()
 {
 	if(SquadLeader != this && SquadMembers.Num() > 0 && SquadMembers.Contains(SquadLeader))
@@ -295,7 +290,9 @@ void AAICharacter::UpdateState()
 	case EAIState::Cover:
 		if (HealthComponent->GetCurrentHealthPercentage()*100 > 0.5f)
 		{
+			
 			CurrentState = EAIState::Patrol;
+			BehaviourComponent->bIsTakingCover = false;
 			BehaviourComponent->TickPatrol();
 			break;
 		}
@@ -305,6 +302,11 @@ void AAICharacter::UpdateState()
 	default:
 		break;
 	}
+}
+
+UBehaviourComponent* AAICharacter::GetBehaviourComponent()
+{
+	return BehaviourComponent;
 }
 
 bool AAICharacter::IsLeader()
@@ -340,6 +342,9 @@ void AAICharacter::MoveAlongPath()
 				< PathfindingError)
 		{
 			BehaviourComponent->bSniperInPosition = true;
+		}else if(CurrentState == EAIState::Cover && !BehaviourComponent->CoverVector.IsZero())
+		{
+			BehaviourComponent->bIsTakingCover = true;
 		}
 		
 		CurrentPath.Pop();
@@ -427,6 +432,21 @@ void AAICharacter::Tick(float DeltaTime)
 		UpdateState();
 	}
 	UpdateMoveState();
+
+	// Distance check to see if actor has moved
+	MovementCheckTimer += DeltaTime;
+	if (MovementCheckTimer >= 2.0f) // 2-second interval
+	{
+		float DistanceMoved = FVector::Dist(GetActorLocation(), LastPosition);
+		if (DistanceMoved < MinDistanceThreshold)
+		{
+			CurrentPath.Empty();
+		}
+		// Reset the timer and update last position
+		MovementCheckTimer = 0.0f;
+		LastPosition = GetActorLocation();
+	}
+	
 	if(!CurrentPath.IsEmpty())
 	{
 		MoveAlongPath();

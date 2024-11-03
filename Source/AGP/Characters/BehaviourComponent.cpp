@@ -136,6 +136,7 @@ void UBehaviourComponent::TickEvade()
 
 void UBehaviourComponent::TickCover()
 {
+	if(bIsTakingCover) return;
 	OwnerCharacter->CurrentPath.Empty();
 
 	FVector ObstacleLocation = OwnerCharacter->PathfindingSubsystem->FindInMap(
@@ -153,7 +154,7 @@ void UBehaviourComponent::TickCover()
 
 	// Calculate a position on the opposite side of the obstacle, facing away from the damage location
 	FVector CoverDirection = (OwnerCharacter->GetActorLocation() - DamageLocation).GetSafeNormal();
-	FVector CoverVector = ObstacleLocation + CoverDirection * CoverOffsetDistance;
+	CoverVector = ObstacleLocation + CoverDirection * CoverOffsetDistance;
 
 	// Check if this CoverVector is actually behind the obstacle
 	if (!IsCoverPositionValid(CoverVector, ObstacleLocation))
@@ -162,7 +163,6 @@ void UBehaviourComponent::TickCover()
 		CoverVector = ObstacleLocation; // Fallback, refine this if needed.
 	}
 	
-
 	// Set the calculated cover vector as the target cover point
 	OwnerCharacter->CurrentPath = OwnerCharacter->PathfindingSubsystem->GetPath(
 		OwnerCharacter->GetActorLocation(), CoverVector);
@@ -266,14 +266,19 @@ void UBehaviourComponent::SeekHealing()
 			}
 
 			float CurrentHealerDistance = FVector::Dist(OwnerCharacter->GetActorLocation(), ClosestHealer->GetActorLocation());
-			float NewHealerDistance = FVector::Dist(OwnerCharacter->GetActorLocation(), ClosestHealer->GetActorLocation());
+			float NewHealerDistance = FVector::Dist(Itr->GetActorLocation(), ClosestHealer->GetActorLocation());
 			
-			if(FVector::Dist(OwnerCharacter->GetActorLocation() - ClosestHealer->GetActorLocation())
-				 Itr->GetActorLocation() - ClosestHealer->GetActorLocation())
+			if(CurrentHealerDistance > NewHealerDistance)
 			{
-				
+				ClosestHealer = *Itr;
 			}
 		}
+	}
+
+	if(!OwnerCharacter->CurrentPath.IsEmpty())
+	{
+		OwnerCharacter->CurrentPath.Empty();
+		OwnerCharacter->CurrentPath.Add(ClosestHealer->GetActorLocation());
 	}
 }
 

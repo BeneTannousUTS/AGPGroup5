@@ -9,6 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="82654485-c85a-4a67-8cf2-21764a93573c" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.AGP/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ProceduralMapTESTING.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/AICharacter.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/BehaviourComponent.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/BehaviourComponent.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/AGP/Characters/BehaviourComponent.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/AGP/Characters/BehaviourComponent.h" afterDir="false" />
     </list>
@@ -21,7 +24,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/../../Finished Labs/Lab10StartingPoint/Lab10StartingPoint/AGP/Source/AGP/Characters/BaseCharacter.cpp" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../Finished Labs/Lab10StartingPoint/Lab10StartingPoint/AGP/Source/AGP/Characters/BaseCharacter.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../Finished Labs/Lab10StartingPoint/Lab10StartingPoint/AGP/Source/AGP/Characters/BaseCharacter.h" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
@@ -195,6 +198,8 @@
       <workItem from="1730536184113" duration="29544000" />
       <workItem from="1730567843220" duration="4993000" />
       <workItem from="1730594688152" duration="1591000" />
+      <workItem from="1730615663930" duration="694000" />
+      <workItem from="1730619625579" duration="2187000" />
     </task>
     <servers />
   </component>

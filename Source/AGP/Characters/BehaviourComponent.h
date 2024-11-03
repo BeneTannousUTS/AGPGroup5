@@ -35,6 +35,8 @@ protected:
 	bool IsCoverPositionValid(const FVector& CoverPosition, const FVector& ObstacleLocation);
 
 	float CoverOffsetDistance = 50.0f;
+	FVector CoverVector;
+	bool bIsTakingCover = false;
 
 	//Logic for any exceptions to AI logic, i.e. looking for money, healing squad members, etc
 	void CheckSpecialActions();

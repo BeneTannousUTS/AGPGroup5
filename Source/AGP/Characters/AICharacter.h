@@ -196,4 +196,7 @@ private:
 	bool bIgnoreStandardTick = false;
 	float SquadCheckInterval = 0.5f;
 	float SquadCheckTimer = 0.0f;
+	float MovementCheckTimer = 0.0f;
+	FVector LastPosition;
+	const float MinDistanceThreshold = 10.0f;
 };
